@@ -6,6 +6,7 @@ use Tk\Form;
 use Tk\Form\Event;
 use Tk\Form\Field;
 use App\Controller\Iface;
+use An\Plugin;
 
 /**
  * @author Michael Mifsud <info@tropotek.com>
@@ -46,8 +47,8 @@ class ProfileSettings extends Iface
      */
     public function doDefault(Request $request)
     {
-        /** @var \sample\Plugin $plugin */
-        $plugin = \sample\Plugin::getInstance();
+        /** @var Plugin $plugin */
+        $plugin = Plugin::getInstance();
 
         $this->profile = \App\Db\ProfileMap::create()->find($request->get('zoneId'));
         $this->data = \Tk\Db\Data::create($plugin->getName() . '.course.profile', $this->profile->getId());

@@ -1,7 +1,6 @@
 <?php
 namespace An;
 
-
 /**
  * @author Michael Mifsud <info@tropotek.com>
  * @link http://www.tropotek.com/
@@ -13,7 +12,7 @@ class Plugin extends \App\Plugin\Iface
     /**
      * A helper method to get the Plugin instance globally
      *
-     * @return \Tk\Plugin\Iface
+     * @return static
      */
     static function getInstance()
     {
@@ -35,7 +34,7 @@ class Plugin extends \App\Plugin\Iface
         $this->getPluginFactory()->registerZonePlugin($this, self::ZONE_COURSE_PROFILE);
         //$this->getPluginFactory()->registerZonePlugin($this, self::ZONE_COURSE);
 
-        \App\Factory::getEventDispatcher()->addSubscriber(new \Skill\Listener\SetupHandler());
+        \App\Factory::getEventDispatcher()->addSubscriber(new \An\Listener\SetupHandler());
     }
     
     /**
@@ -54,8 +53,6 @@ class Plugin extends \App\Plugin\Iface
         $migrate->setTempPath($config->getTempPath());
         $migrate->migrate(dirname(__FILE__) . '/sql');
 
-
-
     }
 
     /**
@@ -67,7 +64,6 @@ class Plugin extends \App\Plugin\Iface
     {
         // TODO: Implement doDeactivate() method.
         $db = \App\Factory::getDb();
-
 
     }
 

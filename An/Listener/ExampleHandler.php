@@ -6,6 +6,7 @@ use Tk\Kernel\KernelEvents;
 use Tk\Event\ControllerEvent;
 use Tk\Event\GetResponseEvent;
 use Tk\Event\Event;
+use An\Plugin;
 
 /**
  * @author Michael Mifsud <info@tropotek.com>
@@ -47,7 +48,7 @@ class ExampleHandler implements Subscriber
      */
     public function onControllerAccess(ControllerEvent $event)
     {
-        $plugin = \sample\Plugin::getInstance();
+        $plugin = Plugin::getInstance();
         $config = $plugin->getConfig();
         $config->getLog()->info($plugin->getName() . ': onControllerAccess(\''.$this->zoneName.'\', '.$this->zoneId.') ');
 
@@ -60,7 +61,7 @@ class ExampleHandler implements Subscriber
      */
     public function onControllerShow(Event $event)
     {
-        $plugin = \sample\Plugin::getInstance();
+        $plugin = Plugin::getInstance();
         $config = $plugin->getConfig();
         $config->getLog()->info($plugin->getName() . ': onControllerAccess(\''.$this->zoneName.'\', '.$this->zoneId.') ');
     }

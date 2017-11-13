@@ -6,6 +6,7 @@ use Tk\Form;
 use Tk\Form\Event;
 use Tk\Form\Field;
 use App\Controller\Iface;
+use An\Plugin;
 
 /**
  * @author Michael Mifsud <info@tropotek.com>
@@ -33,8 +34,8 @@ class SystemSettings extends Iface
     {
         $this->setPageTitle('Animal Plugin Settings');
 
-        /** @var \An\Plugin $plugin */
-        $plugin = \An\Plugin::getInstance();
+        /** @var Plugin $plugin */
+        $plugin = Plugin::getInstance();
         $this->data = \Tk\Db\Data::create($plugin->getName());
     }
 
