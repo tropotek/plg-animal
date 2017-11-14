@@ -47,7 +47,7 @@ class SetupHandler implements Subscriber
 
             $course = \App\Factory::getCourse();
             if ($course) {
-//                $dispatcher->addSubscriber(new \An\Listener\EntryManagerButtonHandler($course));
+                $dispatcher->addSubscriber(new \An\Listener\ReportEditHandler($course));
 //                $dispatcher->addSubscriber(new \An\Listener\PlacementManagerButtonHandler($course));
 //                $dispatcher->addSubscriber(new \An\Listener\CourseUserListButtonHandler($course));
             }
