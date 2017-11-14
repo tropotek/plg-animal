@@ -2,57 +2,52 @@
 namespace An\Listener;
 
 use Tk\Event\Subscriber;
-use Tk\Kernel\KernelEvents;
-use Tk\Event\ControllerEvent;
-use Tk\Event\GetResponseEvent;
 use Tk\Event\Event;
 use An\Plugin;
 
 /**
+ * Class StartupHandler
+ *
  * @author Michael Mifsud <info@tropotek.com>
  * @link http://www.tropotek.com/
  * @license Copyright 2015 Michael Mifsud
  */
-class ExampleHandler implements Subscriber
+class ProfileEditHandler implements Subscriber
 {
 
-    private $zoneName = '';
-    private $zoneId = 0;
+    private $profileId = 0;
 
 
-    public function __construct($zoneName, $zoneId)
+    public function __construct($profileId)
     {
-        $this->zoneName = $zoneName;
-        $this->zoneId = (int)$zoneId;
+        $this->profileId = (int)$profileId;
     }
 
-
-    /**
-     *
-     * @param GetResponseEvent $event
-     */
-    public function onSystemInit(GetResponseEvent $event)
-    {
-        //$this->plugin = \Eg\Plugin::getInstance();
-        //vd('Example: onSystemInit');
-
-        //vd($event->getRequest()->getAttribute('courseCode'));
-        //vd(\Tk\Config::getInstance()->getCourse());
-
-    }
 
     /**
      * Check the user has access to this controller
      *
-     * @param ControllerEvent $event
+     * @param Event $event
      */
-    public function onControllerAccess(ControllerEvent $event)
+    public function onControllerInit(Event $event)
     {
         $plugin = Plugin::getInstance();
         $config = $plugin->getConfig();
-        $config->getLog()->info($plugin->getName() . ': onControllerAccess(\''.$this->zoneName.'\', '.$this->zoneId.') ');
+        //$config->getLog()->info($plugin->getName() . ': onControllerAccess(\'profile\', '.$this->profileId.') ');
+
+        /** @var \Tk\Controller\Iface $controller */
+        $controller = $event->get('controller');
+        if ($controller instanceof \App\Controller\Profile\Edit) {
+            if ($controller->getUser()->isStaff()) {
+                /** @var \Tk\Ui\Admin\ActionPanel $actionPanel */
+                $actionPanel = $controller->getActionPanel();
+                $actionPanel->addButton(\Tk\Ui\Button::create('Animal Types',
+                    \App\Uri::createHomeUrl('/animalTypeManager.html')->set('profileId', $this->profileId), 'fa fa-paw'));
+            }
+        }
 
     }
+
 
     /**
      * Check the user has access to this controller
@@ -63,7 +58,7 @@ class ExampleHandler implements Subscriber
     {
         $plugin = Plugin::getInstance();
         $config = $plugin->getConfig();
-        $config->getLog()->info($plugin->getName() . ': onControllerAccess(\''.$this->zoneName.'\', '.$this->zoneId.') ');
+        //$config->getLog()->info($plugin->getName() . ': onControllerShow(\'profile\', '.$this->profileId.') ');
     }
 
 
@@ -90,8 +85,7 @@ class ExampleHandler implements Subscriber
     public static function getSubscribedEvents()
     {
         return array(
-            KernelEvents::REQUEST => array('onSystemInit', -10),
-            KernelEvents::CONTROLLER => array('onControllerAccess', 0),
+            \Tk\PageEvents::CONTROLLER_INIT => array('onControllerInit', 0),
             \Tk\PageEvents::CONTROLLER_SHOW => array('onControllerShow', 0)
         );
     }

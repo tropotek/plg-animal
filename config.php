@@ -9,12 +9,9 @@ if ($composer)
 /** @var \Tk\Routing\RouteCollection $routes */
 $routes = $config['site.routes'];
 
-$params = array('role' => 'admin');
-$routes->add('Skill Admin Settings', new \Tk\Routing\Route('/skill/adminSettings.html', 'Skill\Controller\SystemSettings::doDefault', $params));
+$params = array('role' => 'staff');
 
-$params = array('role' => array('client', 'staff'));
-$routes->add('Skill Profile Settings', new \Tk\Routing\Route('/skill/profileSettings.html', 'Skill\Controller\ProfileSettings::doDefault', $params));
-
-
+$routes->add('Animal Type Manager', new \Tk\Routing\Route('/staff/animalTypeManager.html', 'An\Controller\Type\Manager::doDefault', $params));
+$routes->add('Animal Type Edit', new \Tk\Routing\Route('/staff/animalTypeEdit.html', 'An\Controller\Type\Edit::doDefault', $params));
 
 

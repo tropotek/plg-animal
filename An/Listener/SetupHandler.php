@@ -41,9 +41,9 @@ class SetupHandler implements Subscriber
 
         $profile = \App\Factory::getProfile();
         if ($profile && $plugin->isZonePluginEnabled(Plugin::ZONE_COURSE_PROFILE, $profile->getId())) {
-            \Tk\Log::debug($plugin->getName() . ': Sample init course profile plugin stuff: ' . $profile->name);
+            \Tk\Log::debug($plugin->getName() . ': Animals init course profile plugin stuff: ' . $profile->name);
 
-            $dispatcher->addSubscriber(new \An\Listener\ExampleHandler(Plugin::ZONE_COURSE_PROFILE, $profile->getId()));
+            $dispatcher->addSubscriber(new \An\Listener\ProfileEditHandler($profile->getId()));
 
             $course = \App\Factory::getCourse();
             if ($course) {
