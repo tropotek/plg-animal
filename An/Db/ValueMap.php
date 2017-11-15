@@ -64,11 +64,26 @@ class ValueMap extends \App\Db\Mapper
 
 
     /**
+     * Remove all values from the DB by placementId
+     *
+     * @param $placementId
+     * @return $this
+     */
+    public function removeAllByPlacementId($placementId)
+    {
+        $list = $this->findFiltered(array('placementId' => $placementId));
+        foreach ($list as $v) {
+            $v->delete();
+        }
+        return $this;
+    }
+
+    /**
      * Find filtered records
      *
      * @param array $filter
      * @param Tool $tool
-     * @return ArrayObject
+     * @return ArrayObject|Value[]
      */
     public function findFiltered($filter = array(), $tool = null)
     {

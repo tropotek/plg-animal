@@ -61,7 +61,7 @@ class TypeMap extends \App\Db\Mapper
      *
      * @param array $filter
      * @param Tool $tool
-     * @return ArrayObject
+     * @return ArrayObject|Type[]
      */
     public function findFiltered($filter = array(), $tool = null)
     {
@@ -129,4 +129,8 @@ class TypeMap extends \App\Db\Mapper
         return $r;
 
     }
+
+
+
+
 }
