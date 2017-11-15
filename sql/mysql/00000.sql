@@ -47,5 +47,6 @@ CREATE TABLE IF NOT EXISTS animal_value (
   modified DATETIME NOT NULL,
   created DATETIME NOT NULL,
   PRIMARY KEY (id),
+  INDEX (placement_id, type_id),
   INDEX (placement_id)
 ) ENGINE=InnoDB;
