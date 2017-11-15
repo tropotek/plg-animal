@@ -22,8 +22,6 @@ class Report extends AdminManagerIface
     private $profile = null;
 
 
-
-
     /**
      * Manager constructor.
      */
