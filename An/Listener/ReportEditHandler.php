@@ -34,7 +34,7 @@ class ReportEditHandler implements Subscriber
     public function onFormPreInit(\Tk\Event\FormEvent $event)
     {
         /** @var \App\Controller\Placement\ReportEdit $controller */
-        $controller = $event->getForm()->getParam('controller');
+        $controller = $event->getForm()->get('controller');
         if ($controller instanceof \App\Controller\Placement\ReportEdit) {
             if ($controller->getUser()->isStaff() && $controller->getCourse() && $controller->getPlacement()) {
                 $this->animalTypes = \An\Db\TypeMap::create()->findFiltered(array('profileId' => $controller->getPlacement()->getCourse()->profileId));
@@ -54,8 +54,7 @@ class ReportEditHandler implements Subscriber
             $this->form->addField(new \Tk\Form\Field\Checkbox('nonAnimal'))->setFieldset('Animal Types')->setNotes('Is this a non-animal placement?<br/><em>(Note: Checking this box will delete any existing animal data)</em>');
             $this->form->addField(new \An\Form\Field\Animals('animals', $this->animalTypes, $this->controller->getPlacement()))->setFieldset('Animal Types')->setNotes('If this is an animal placement, add the type and number of animals seen.');
 
-            /** @var \Tk\Form\Renderer\Dom $formRenderer */
-            $formRenderer = $this->form->getParam('renderer');
+            $formRenderer = $this->form->getRenderer();
             $template = $formRenderer->getTemplate();
             $js = <<<JS
 jQuery(function($) {

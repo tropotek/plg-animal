@@ -54,7 +54,7 @@ class Edit extends AdminEditIface
     protected function buildForm() 
     {
         $this->form = \App\Factory::createForm('animalTypeEdit');
-        $this->form->setParam('renderer', \App\Factory::createFormRenderer($this->form));
+        $this->form->setRenderer(\App\Factory::createFormRenderer($this->form));
 
         $this->form->addField(new Field\Input('name'));
         $this->form->addField(new \App\Form\Field\MinMax('min', 'max'));
@@ -97,7 +97,7 @@ class Edit extends AdminEditIface
         $template = parent::show();
 
         // Render the form
-        $template->insertTemplate('form', $this->form->getParam('renderer')->show()->getTemplate());
+        $template->insertTemplate('form', $this->form->getRenderer()->show()->getTemplate());
 
         return $template;
     }

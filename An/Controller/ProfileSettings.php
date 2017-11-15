@@ -54,7 +54,7 @@ class ProfileSettings extends Iface
         $this->data = \Tk\Db\Data::create($plugin->getName() . '.course.profile', $this->profile->getId());
 
         $this->form = \App\Factory::createForm('formEdit');
-        $this->form->setParam('renderer', \App\Factory::createFormRenderer($this->form));
+        $this->form->setRenderer(\App\Factory::createFormRenderer($this->form));
 
         $this->form->addField(new Field\Input('plugin.title'))->setLabel('Site Title')->setRequired(true);
         $this->form->addField(new Field\Input('plugin.email'))->setLabel('Site Email')->setRequired(true);
@@ -108,7 +108,7 @@ class ProfileSettings extends Iface
         $template = parent::show();
 
         // Render the form
-        $template->insertTemplate($this->form->getId(), $this->form->getParam('renderer')->show()->getTemplate());
+        $template->insertTemplate($this->form->getId(), $this->form->getRenderer()->show()->getTemplate());
 
         return $template;
     }
