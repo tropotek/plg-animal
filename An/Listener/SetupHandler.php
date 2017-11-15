@@ -22,8 +22,6 @@ class SetupHandler implements Subscriber
          *  the institution object, unless you manually save the id in the
          *  session on first page load?
          */
-
-        $config = \Tk\Config::getInstance();
         $dispatcher = \App\Factory::getEventDispatcher();
         $plugin = Plugin::getInstance();
 
@@ -32,7 +30,7 @@ class SetupHandler implements Subscriber
 //            \Tk\Log::debug($plugin->getName() . ': Sample init client plugin stuff: ' . $institution->name);
 //            $dispatcher->addSubscriber(new \Ems\Listener\ExampleHandler(Plugin::ZONE_INSTITUTION, $institution->getId()));
 //        }
-//
+
 //        $course = \App\Factory::getCourse();
 //        if ($course && $plugin->isZonePluginEnabled(Plugin::ZONE_COURSE, $course->getId())) {
 //            \Tk\Log::debug($plugin->getName() . ': Sample init course plugin stuff: ' . $course->name);
@@ -42,12 +40,11 @@ class SetupHandler implements Subscriber
         $profile = \App\Factory::getProfile();
         if ($profile && $plugin->isZonePluginEnabled(Plugin::ZONE_COURSE_PROFILE, $profile->getId())) {
             \Tk\Log::debug($plugin->getName() . ': Animals init course profile plugin stuff: ' . $profile->name);
+            $dispatcher->addSubscriber(new \An\Listener\ProfileEditHandler());
 
-            $dispatcher->addSubscriber(new \An\Listener\ProfileEditHandler($profile->getId()));
-
-            $course = \App\Factory::getCourse();
-            if ($course) {
-                $dispatcher->addSubscriber(new \An\Listener\ReportEditHandler($course));
+            if (\App\Factory::getCourse()) {
+                $dispatcher->addSubscriber(new \An\Listener\ReportEditHandler());
+                $dispatcher->addSubscriber(new \An\Listener\StaffSideMenuHandler());
 //                $dispatcher->addSubscriber(new \An\Listener\PlacementManagerButtonHandler($course));
 //                $dispatcher->addSubscriber(new \An\Listener\CourseUserListButtonHandler($course));
             }

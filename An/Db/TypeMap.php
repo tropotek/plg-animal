@@ -30,6 +30,7 @@ class TypeMap extends \App\Db\Mapper
             $this->dbMap->addPropertyMap(new Db\Integer('min'));
             $this->dbMap->addPropertyMap(new Db\Integer('max'));
             $this->dbMap->addPropertyMap(new Db\Text('notes'));
+            $this->dbMap->addPropertyMap(new Db\Integer('orderBy', 'order_by'));
             $this->dbMap->addPropertyMap(new Db\Date('modified'));
             $this->dbMap->addPropertyMap(new Db\Date('created'));
         }
@@ -50,6 +51,7 @@ class TypeMap extends \App\Db\Mapper
             $this->formMap->addPropertyMap(new Form\Integer('min'));
             $this->formMap->addPropertyMap(new Form\Integer('max'));
             $this->formMap->addPropertyMap(new Form\Text('notes'));
+            $this->formMap->addPropertyMap(new Form\Integer('orderBy'));
         }
         return $this->formMap;
     }
@@ -63,8 +65,20 @@ class TypeMap extends \App\Db\Mapper
      */
     public function findFiltered($filter = array(), $tool = null)
     {
-        //if (!$tool) $tool = \Tk\Db\Tool::create('orderBy');
-        $from = sprintf('%s a ', $this->getDb()->quoteParameter($this->getTable()));
+        if (!$tool) $tool = \Tk\Db\Tool::create('orderBy');
+
+        list($from, $where) = $this->processFilter($filter);
+        $r = $this->selectFrom($from, $where, $tool);
+        return $r;
+    }
+
+    /**
+     * @param $filter
+     * @return array
+     */
+    protected function processFilter($filter)
+    {
+        $from = sprintf('%s a ', $this->quoteTable($this->getTable()));
         $where = '';
 
         if (!empty($filter['keywords'])) {
@@ -89,6 +103,17 @@ class TypeMap extends \App\Db\Mapper
             $where .= sprintf('a.name = %s AND ', $this->quote($filter['name']));
         }
 
+        if (!empty($filter['dateFrom'])) {
+            /** @var \DateTime $dtef */
+            $dtef = \Tk\Date::floor($filter['dateFrom']);
+            $where .= sprintf('a.created >= %s AND ', $this->quote($dtef->format(\Tk\Date::FORMAT_ISO_DATETIME)) );
+        }
+        if (!empty($filter['dateTo'])) {
+            /** @var \DateTime $dtet */
+            $dtet = \Tk\Date::ceil($filter['dateTo']);
+            $where .= sprintf('a.created <= %s AND ', $this->quote($dtet->format(\Tk\Date::FORMAT_ISO_DATETIME)) );
+        }
+
         if (!empty($filter['exclude'])) {
             $w = $this->makeMultiQuery($filter['exclude'], 'a.id', 'AND', '!=');
             if ($w) {
@@ -100,8 +125,8 @@ class TypeMap extends \App\Db\Mapper
             $where = substr($where, 0, -4);
         }
 
-        $res = $this->selectFrom($from, $where, $tool);
-        return $res;
-    }
+        $r = array($from, $where);
+        return $r;
 
+    }
 }

@@ -35,7 +35,7 @@
     // plugin settings
     var defaults = {
       foo: 'bar',
-      onFoo: function() {}
+      onChange: function(e) {}
     };
 
     // plugin vars
@@ -49,20 +49,22 @@
 
 
       $element.find('.animals-add').on('click', function(e) {
-        var srcBlock = $(this).closest('.animals-input-add');
-        srcBlock.find('.error').removeClass('error');
+        //var srcBlock = $(this).closest('.animals-input-add');
+        var srcBlock = $(this).closest('.form-group');
+        $element.find('.has-error').removeClass('has-error');
+
 
         // validate the fields
-        var typeId = srcBlock.find('.animals-type-id-add').val();
-        if (typeId === '' || typeId.match(/^[0-9]+$/) === null || parseInt(typeId) <= 0) {
-          srcBlock.find('.animals-type-id-add').addClass('error');
-        }
         var value = srcBlock.find('.animals-value-add').val();
         if (value === '' || value.match(/^[0-9]+$/) === null || parseInt(value) <= 0) {
-          srcBlock.find('.animals-value-add').addClass('error');
+          srcBlock.find('.animals-value-add').parent().addClass('has-error').focus();
+        }
+        var typeId = srcBlock.find('.animals-type-id-add').val();
+        if (typeId === '' || typeId.match(/^[0-9]+$/) === null || parseInt(typeId) <= 0) {
+          srcBlock.find('.animals-type-id-add').parent().addClass('has-error').focus();
         }
 
-        if (srcBlock.find('.error').length > 0) {
+        if ($element.find('.has-error').length > 0) {
           return;
         }
 
@@ -78,29 +80,19 @@
         inputBlock.append(row);
       });
 
-
       $element.find('.animals-del').on('click', function (e1) {
         $(this).closest('.animals-input').remove();
       });
 
-      $element.on('submit', function(e) {
-        if (parseInt(field.find('.animals-value-add').val(), 10) > 0) {
-          var b = confirm('Woops! looks like you may have forgotten to add you last animal entry. Continue?');
-          if (!b && typeof uOff !== 'undefined') {
-//            uOff();
-            //form.unbind('submit');
-            //e.preventDefault();
+      form.on('submit', function(e) {
+        if (parseInt($element.find('.animals-value-add').val(), 10) > 0) {
+          var b = confirm('Woops! looks like you may have forgotten to add you last animal entry, this information will be lost.\nDo you want to continue?');
+          if (!b) {
             return false;
           }
         }
         return true;
       });
-
-
-
-
-
-
 
     };  // END init()
 
@@ -110,15 +102,22 @@
     // public methods
 
     /**
-     *
      * @param b bool
      */
     plugin.enable = function(b) {
-      if (b === false) {
-        // TODO: disable all controls
-      } else {
-        // TODO: enable all controls
+      if (b === false) { // disable all controls
+        $element.find('input, select, button').attr('disabled', 'disabled');
+      } else {  // enable all controls
+        $element.find('input, select, button').removeAttr('disabled');
       }
+    };
+
+    /**
+     *
+     * @returns {*|HTMLElement}
+     */
+    plugin.getElement = function () {
+      return $element;
     };
 
     // call the "constructor" method
@@ -137,8 +136,3 @@
 
 })(jQuery);
 
-jQuery(function($) {
-  $('.tk-animals-field').animalField({
-
-  });
-});

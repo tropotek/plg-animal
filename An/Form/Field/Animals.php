@@ -22,8 +22,6 @@ class Animals extends \Tk\Form\Field\Iface
 
 
     /**
-     * __construct
-     *
      * @param string $name
      * @param \An\Db\Type[]|\Tk\Db\Map\ArrayObject $typeList
      * @param \App\Db\Placement $placement
@@ -39,6 +37,30 @@ class Animals extends \Tk\Form\Field\Iface
         }
     }
 
+    /**
+     * @param array|\ArrayObject $values
+     * @return $this
+     */
+    public function load($values)
+    {
+        // When the value does not exist it is ignored (may not be the desired result for unselected checkbox or empty select box)
+        $vals = array();
+        if (!empty($values[$this->getName().'-typeId']) && is_array($values[$this->getName().'-typeId'])) {
+            $typeArr = $values[$this->getName().'-typeId'];
+            $valueArr = $values[$this->getName().'-value'];
+            foreach ($typeArr as $i => $typeId) {
+                if ($valueArr[$i] <= 0) continue;
+                if (!isset($vals[$typeId]))
+                    $vals[$typeId] = $valueArr[$i];
+                else
+                    $vals[$typeId] += $valueArr[$i];
+            }
+        }
+        if (!count($vals)) $vals = null;
+        $this->setValue($vals);
+        return $this;
+    }
+
 
     /**
      * Get the element HTML
@@ -48,8 +70,6 @@ class Animals extends \Tk\Form\Field\Iface
     public function show()
     {
         $template = $this->getTemplate();
-
-        //$this->decorateElement($template);
 
         $template->appendJsUrl(\Tk\Uri::create(\An\Plugin::getInstance()->getPluginPath().'/An/Form/Field/jquery.animalField.js'));
 
@@ -73,63 +93,51 @@ class Animals extends \Tk\Form\Field\Iface
         }
         $repeat->appendRepeat();
 
-
-
-
-
         $list = $this->getValue();
         if (is_array($list)) {
-            foreach ($list as $v) {
+            foreach ($list as $typeId => $value) {
                 $repeat = $template->getRepeat('row');
                 $repeat->setAttr('valueId', 'name', $this->getName().'-valueId[]');
                 $repeat->setAttr('typeId', 'name', $this->getName().'-typeId[]');
                 $repeat->setAttr('value', 'name', $this->getName().'-value[]');
                 /** @var \Dom\Form\Select $selEl */
                 $selEl = $repeat->getForm()->getFormElement('typeId');
+
                 /** @var \An\Db\Type $type */
                 foreach ($this->typeList as $type) {
                     $selEl->appendOption($type->name, $type->id);
                 }
-                $selEl->setValue($v['typeId']);
-                $repeat->getForm()->getFormElement('valueId')->setValue($v['valueId']);
-                $repeat->getForm()->getFormElement('value')->setValue($v['value']);
+                $selEl->setValue($typeId);
+                //$repeat->getForm()->getFormElement('valueId')->setValue('0');
+                $repeat->getForm()->getFormElement('value')->setValue($value);
 
                 $repeat->appendRepeat();
             }
         }
 
-
-
-
-
-
-
         return $template;
     }
 
     /**
-     * makeTemplate
-     *
      * @return \Dom\Template
      */
     public function __makeTemplate()
     {
-
         $xhtml = <<<HTML
 <div class="tk-animals-field" var="field">
 
   <div class="animals-input-block">
-    <div class="row animals-input" repeat="row" var="row">
+    <div class="form-group animals-input" repeat="row" var="row">
       <input type="hidden" name="valueId" value="0" var="valueId"/>
-      <div class="col-sm-4">
+      <div class="col-xs-4">
         <select name="typeId" class="form-control input-sm animals-type-id" var="typeId" style="padding: 0;">
           <option value="0">-- Select Animal --</option>
         </select>
       </div>
-      <div class="col-sm-2">
+      <div class="col-xs-4">
         <input type="text" class="form-control input-sm animals-value" placeholder="Animals Treated" name="value" value="0" var="value"/>
       </div>
-      <div class="col-sm-6">
+      <div class="col-xs-4">
         <button type="button" class="btn btn-danger btn-xs animals-del" var="del" title="Remove this animal type from your list"><i class="fa fa-minus"></i></button>
       </div>
     </div>
@@ -137,16 +145,16 @@ class Animals extends \Tk\Form\Field\Iface
 
   <div><hr/></div>
   
-  <div class="row animals-input-add">
-    <div class="col-sm-4">
+  <div class="form-group animals-input-add">
+    <div class="col-xs-4">
       <select name="typeId-add" class="form-control input-sm animals-type-id-add" var="typeId">
         <option value="">-- Select Animal --</option>
       </select>
     </div>
-    <div class="col-sm-2">
+    <div class="col-xs-4">
       <input type="text" class="form-control input-sm animals-value-add" placeholder="Animals Treated" name="value-add" value="0" var="value"/>
     </div>
-    <div class="col-sm-6">
+    <div class="col-xs-4">
       <button type="button" class="btn btn-primary btn-xs animals-add" var="add" title="Add a new animal type to your list"><i class="fa fa-plus"></i></button>
     </div>
   </div>

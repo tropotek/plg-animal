@@ -51,6 +51,11 @@ class Type extends \Tk\Db\Map\Model
     public $modified = null;
 
     /**
+     * @var int
+     */
+    public $orderBy = 0;
+
+    /**
      * @var \DateTime
      */
     public $created = null;

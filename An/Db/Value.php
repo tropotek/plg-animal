@@ -72,6 +72,24 @@ class Value extends \Tk\Db\Map\Model
     }
 
     /**
+     * @param \App\Db\Placement $placement
+     * @param \An\Db\Type $type
+     * @param int $value
+     * @param string $notes
+     * @return Value
+     */
+    public static function create($placement, $type, $value, $notes = '')
+    {
+        $obj = new self();
+        $obj->placementId = $placement->id;
+        $obj->typeId = $type->id;
+        $obj->name = $type->name;
+        $obj->notes = $notes;
+        $obj->value = (int)$value;
+        return $obj;
+    }
+
+    /**
      *
      */
     public function save()

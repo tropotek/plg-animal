@@ -2,16 +2,13 @@
 namespace An\Listener;
 
 use Tk\Event\Subscriber;
-use An\Plugin;
 
 /**
- * Class StartupHandler
- *
  * @author Michael Mifsud <info@tropotek.com>
  * @link http://www.tropotek.com/
  * @license Copyright 2015 Michael Mifsud
  */
-class ProfileEditHandler implements Subscriber
+class StaffSideMenuHandler implements Subscriber
 {
 
     /**
@@ -21,14 +18,13 @@ class ProfileEditHandler implements Subscriber
      */
     public function onControllerInit(\Tk\Event\Event $event)
     {
-        /** @var \Tk\Controller\Iface $controller */
+        /** @var \App\Controller\Iface $controller */
         $controller = $event->get('controller');
-        if ($controller instanceof \App\Controller\Profile\Edit) {
-            if ($controller->getCourse() && $controller->getUser()->isStaff()) {
-                /** @var \Tk\Ui\Admin\ActionPanel $actionPanel */
-                $actionPanel = $controller->getActionPanel();
-                $actionPanel->addButton(\Tk\Ui\Button::create('Animal Types',
-                    \App\Uri::createHomeUrl('/animalTypeManager.html')->set('profileId', $controller->getCourse()->profileId), 'fa fa-paw'));
+        if ($controller->getCourse() && $controller->getUser()->isStaff()) {
+            /** @var \App\Ui\Sidebar\StaffMenu $sideBar */
+            $sideBar = $controller->getPage()->getSidebar();
+            if ($sideBar instanceof \App\Ui\Sidebar\StaffMenu) {
+                $sideBar->addReportUrl(\Tk\Ui\Link::create('Animals', \App\Uri::createCourseUrl('/animalTypeReport.html'), 'fa fa-paw'));
             }
         }
     }
