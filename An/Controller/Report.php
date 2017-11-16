@@ -51,7 +51,7 @@ class Report extends AdminManagerIface
 
         // Filters
         //$this->table->addFilter(new Field\Input('keywords'))->setAttr('placeholder', 'Keywords');
-        $list = array('This Course' => 'course', 'Profile Courses' => 'profile');
+        $list = array('This Course' => 'course', 'All Courses' => 'profile');
         $this->table->addFilter(new Field\Select('courseOnly', $list));
         $this->table->addFilter(new Field\Input('dateStart'))->addCss('date')->setAttr('placeholder', 'Start Date');
         $this->table->addFilter(new Field\Input('dateEnd'))->addCss('date')->setAttr('placeholder', 'End Date');
