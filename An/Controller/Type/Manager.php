@@ -55,7 +55,7 @@ class Manager extends AdminManagerIface
             $u->set('profileId', $this->profile->getId()), 'fa fa-paw'));
 
         $this->table = \App\Factory::createTable(\Tk\Object::basename($this).'_typeList');
-        $this->table->setParam('renderer', \App\Factory::createTableRenderer($this->table));
+        $this->table->setRenderer(\App\Factory::createTableRenderer($this->table));
 
         $this->table->addCell(new \Tk\Table\Cell\Checkbox('id'));
         $this->table->addCell(new \Tk\Table\Cell\Text('name'))->addCss('key')->setUrl(clone $this->editUrl);
@@ -89,7 +89,7 @@ class Manager extends AdminManagerIface
     {
         $template = parent::show();
 
-        $template->replaceTemplate('table', $this->table->getParam('renderer')->show());
+        $template->replaceTemplate('table', $this->table->getRenderer()->show());
 
         return $template;
     }

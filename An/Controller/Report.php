@@ -43,7 +43,7 @@ class Report extends AdminManagerIface
 
 
         $this->table = \App\Factory::createTable(\Tk\Object::basename($this).'_reportingList');
-        $this->table->setParam('renderer', \App\Factory::createTableRenderer($this->table));
+        $this->table->setRenderer(\App\Factory::createTableRenderer($this->table));
 
         $this->table->addCell(new \Tk\Table\Cell\Text('name'))->addCss('key');
         $this->table->addCell(new \Tk\Table\Cell\Text('total'))->setLabel('Animals');
@@ -82,7 +82,7 @@ class Report extends AdminManagerIface
     {
         $template = parent::show();
 
-        $template->replaceTemplate('table', $this->table->getParam('renderer')->show());
+        $template->replaceTemplate('table', $this->table->getRenderer()->show());
 
         return $template;
     }
