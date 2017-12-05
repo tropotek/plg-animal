@@ -36,7 +36,7 @@ class ReportEditHandler implements Subscriber
         /** @var \App\Controller\Placement\ReportEdit $controller */
         $controller = $event->getForm()->get('controller');
         if ($controller instanceof \App\Controller\Placement\ReportEdit) {
-            if ($controller->getUser()->isStaff() && $controller->getCourse() && $controller->getPlacement()) {
+            if ($controller->getCourse() && $controller->getPlacement()) {
                 $this->animalTypes = \An\Db\TypeMap::create()->findFiltered(array('profileId' => $controller->getPlacement()->getCourse()->profileId));
                 if (!$this->animalTypes->count()) return;
                 $this->controller = $controller;
@@ -75,12 +75,16 @@ JS;
 
     /**
      * @param \Tk\Event\FormEvent $event
+     * @throws \Tk\Exception
      */
     public function onFormLoad(\Tk\Event\FormEvent $event)
     {
         if ($this->form) {
             $valueList = \An\Db\ValueMap::create()->findFiltered(array('placementId' => $this->controller->getPlacement()->getId()));
-            if ($valueList->current() && $valueList->current()->typeId == 0) {
+            /** @var \An\Db\Value $currentValue */
+            $currentValue = $valueList->current();
+
+            if ($currentValue && $currentValue->typeId == 0) {
                 $this->form->setFieldValue('nonAnimal', true);
             } else {
                 // Map to field value
