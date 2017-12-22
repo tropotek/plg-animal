@@ -42,8 +42,8 @@ class Report extends AdminManagerIface
             $this->profile = $this->getCourse()->getProfile();
 
 
-        $this->table = \App\Factory::createTable(\Tk\Object::basename($this).'_reportingList');
-        $this->table->setRenderer(\App\Factory::createTableRenderer($this->table));
+        $this->table = \App\Config::getInstance()->createTable(\Tk\Object::basename($this).'_reportingList');
+        $this->table->setRenderer(\App\Config::getInstance()->createTableRenderer($this->table));
 
         $this->table->addCell(new \Tk\Table\Cell\Text('name'))->addCss('key');
         $this->table->addCell(new \Tk\Table\Cell\Text('total'))->setLabel('Animals');
