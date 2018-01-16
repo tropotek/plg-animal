@@ -21,8 +21,10 @@ class StaffSideMenuHandler implements Subscriber
         /** @var \App\Controller\Iface $controller */
         $controller = $event->get('controller');
         if ($controller->getCourse() && $controller->getUser()->isStaff()) {
+            /** @var \App\Page $page */
+            $page = $controller->getPage();
             /** @var \App\Ui\Sidebar\StaffMenu $sideBar */
-            $sideBar = $controller->getPage()->getSidebar();
+            $sideBar = $page->getSidebar();
             if ($sideBar instanceof \App\Ui\Sidebar\StaffMenu) {
                 $sideBar->addReportUrl(\Tk\Ui\Link::create('Animals', \App\Uri::createCourseUrl('/animalTypeReport.html'), 'fa fa-paw'));
             }
