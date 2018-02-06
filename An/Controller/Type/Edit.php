@@ -35,6 +35,8 @@ class Edit extends AdminEditIface
     /**
      *
      * @param Request $request
+     * @throws \Tk\Exception
+     * @throws \Tk\Form\Exception
      */
     public function doDefault(Request $request)
     {
@@ -50,7 +52,9 @@ class Edit extends AdminEditIface
         $this->form->execute($request);
     }
 
-
+    /**
+     * @throws \Tk\Form\Exception
+     */
     protected function buildForm() 
     {
         $this->form = \App\Config::getInstance()->createForm('animalTypeEdit');
