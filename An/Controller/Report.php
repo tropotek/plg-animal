@@ -33,6 +33,8 @@ class Report extends AdminManagerIface
 
     /**
      * @param Request $request
+     * @throws \Exception
+     * @throws \Tk\Db\Exception
      * @throws \Tk\Form\Exception
      */
     public function doDefault(Request $request)
@@ -41,23 +43,22 @@ class Report extends AdminManagerIface
         if (!$this->profile && $this->getCourse())
             $this->profile = $this->getCourse()->getProfile();
 
-
         $this->table = \App\Config::getInstance()->createTable(\Tk\Object::basename($this).'_reportingList');
         $this->table->setRenderer(\App\Config::getInstance()->createTableRenderer($this->table));
 
-        $this->table->addCell(new \Tk\Table\Cell\Text('name'))->addCss('key');
-        $this->table->addCell(new \Tk\Table\Cell\Text('total'))->setLabel('Animals');
-        $this->table->addCell(new \Tk\Table\Cell\Text('count'))->setLabel('Placements');
+        $this->table->addCell(new \Tk\Table\Cell\Text('companyName'))->addCss('key');
+        $this->table->addCell(new \Tk\Table\Cell\Boolean('academic'));
+        $this->table->addCell(new \Tk\Table\Cell\Text('species'));
+        $this->table->addCell(new \Tk\Table\Cell\Text('duration'))->setLabel('Avg. Duration');
+        $this->table->addCell(new \Tk\Table\Cell\Text('rotationCount'))->setLabel('Rotations Per Year');
+        $this->table->addCell(new \Tk\Table\Cell\Text('studentPerRotation'));
+        $this->table->addCell(new \Tk\Table\Cell\Text('animalCount'))->setLabel('Patients Examined');
 
         // Filters
-        //$this->table->addFilter(new Field\Input('keywords'))->setAttr('placeholder', 'Keywords');
-        $list = array('This Course' => 'course', 'All Courses' => 'profile');
-        $this->table->addFilter(new Field\Select('courseOnly', $list));
         $this->table->addFilter(new Field\Input('dateStart'))->addCss('date')->setAttr('placeholder', 'Start Date');
         $this->table->addFilter(new Field\Input('dateEnd'))->addCss('date')->setAttr('placeholder', 'End Date');
 
         // Actions
-        //$this->table->addAction(\Tk\Table\Action\ColumnSelect::create()->setDisabled(array('name', 'total')));
         $this->table->addAction(\Tk\Table\Action\Csv::create());
 
         $this->table->setList($this->getList());
@@ -65,57 +66,40 @@ class Report extends AdminManagerIface
     }
 
     /**
-     * @return array
-     * @throws \Exception
-     */
-    protected function getList()
-    {
-        $filter = $this->table->getFilterValues();
-        $filter['profileId'] = $this->profile->getId();
-        if (!isset($filter['courseOnly']) || $filter['courseOnly'] == 'course') {
-            $filter['courseId'] = $this->getCourse()->getId();
-        }
-        $typeList = \An\Db\ValueMap::create()->findTotals($filter, $this->table->makeDbTool('a.order_by'));
-        return $typeList;
-    }
-
-    /**
+     * @return \Tk\Db\Map\ArrayObject
      * @throws \Exception
      * @throws \Tk\Db\Exception
      */
-    public function getListNew()
+    public function getList()
     {
         $db = $this->getConfig()->getDb();
-
 
         // Cells Required:     | companyName | isAcademic | animalName | avgUnits | numPlacements | numAnimals |
         //                     ---------------------------------------------------------------------------------
 
-        // \Tk\Db\Tool::clearSession();
-        $tool = $this->table->getDbTool('d.`name`, a.`name`', 0);
-
+        $tool = $this->table->getTool('d.name, a.name');
         $filter = $this->table->getFilterValues();
-        $filter['courseId'] = $this->term->courseId;
-        $filter['termId'] = $this->term->id;
+        $filter['profileId'] = $this->getCourse()->profileId;
+        $filter['courseId'] = $this->getCourse()->getId();
 
         $where = '';
 
         if (!empty($filter['companyId'])) {
-            $where .= sprintf('c.companyId = %d AND ', (int)$filter['companyId']);
+            $where .= sprintf('c.company_id = %d AND ', (int)$filter['companyId']);
         }
-        if (!empty($filter['termId'])) {
-            $where .= sprintf('c.termId = %d AND ', (int)$filter['termId']);
+        if (!empty($filter['courseId'])) {
+            $where .= sprintf('c.course_id = %d AND ', (int)$filter['courseId']);
         } else {
-            if (!empty($filter['courseId'])) {
-                $where .= sprintf('b.courseId = %d AND ', (int)$filter['courseId']);
+            if (!empty($filter['profileId'])) {
+                $where .= sprintf('b.profile_id = %d AND ', (int)$filter['profileId']);
             }
         }
 
-        if (!empty($filter['dateFrom']) && !empty($filter['dateTo'])) {     // Contains
-            $dtef = $filter['dateFrom'];
-            $dtet = $filter['dateTo'];
-            $where .= sprintf('c.`dateTo` >= %s AND ', $db->quote($dtef->floor()->toString()) );
-            $where .= sprintf('c.`dateTo` <= %s AND ', $db->quote($dtet->floor()->toString()) );
+        if (!empty($filter['dateStart']) && !empty($filter['dateEnd'])) {     // Contains
+            $start = $filter['dateStart'];
+            $end = $filter['dateEnd'];
+            $where .= sprintf('c.dateStart >= %s AND ', $db->quote(\Tk\Date::floor($start)->format(\Tk\Date::FORMAT_ISO_DATETIME)) );
+            $where .= sprintf('c.dateStart <= %s AND ', $db->quote(\Tk\Date::ceil($end)->format(\Tk\Date::FORMAT_ISO_DATETIME)) );
         }
         if ($where) {
             $where = substr($where, 0, -4);
@@ -124,27 +108,27 @@ class Report extends AdminManagerIface
         // Query
         $toolStr = '';
         if ($tool) {
-            $toolStr = $tool->getSql();
+            $toolStr = $tool->toSql();
         }
 
-        $sql = sprintf('SELECT d.`name` as \'companyName\', a.`name` as \'species\', ROUND(AVG(c.`units`), 1) as \'duration\', 
-            COUNT(c.`id`) as \'rotationCount\', 1 as \'studentPerRotation\', SUM(a.`value`) AS \'animalCount\', e.isAcademic
-FROM animalsValue a, animalsType b, placement c, company d,
+        $sql = sprintf('SELECT SQL_CALC_FOUND_ROWS d.name as \'companyName\', a.name as \'species\', ROUND(AVG(c.units), 1) as \'duration\', 
+            COUNT(c.id) as \'rotationCount\', 1 as \'studentPerRotation\', SUM(a.value) AS \'animalCount\', e.academic
+FROM animal_value a, animal_type b, placement c, company d,
  (
-   SELECT a.id, c.academicAssociate as \'isAcademic\'
-   FROM company a, company_supervisor b, supervisor c
-   WHERE a.id = b.companyId AND b.supervisorId = c.id
+   SELECT a.id, c.academic as \'academic\'
+   FROM company a, company_has_supervisor b, supervisor c
+   WHERE a.id = b.company_id AND b.supervisor_id = c.id
    GROUP BY a.id
  ) e
 
-WHERE a.`typeId` = b.`id` AND a.`typeId` > 0 AND b.`del` = 0 AND a.`placementId` = c.`id` AND 
-      c.`companyId` = d.`id` AND d.id = e.id AND c.`del` = 0 AND d.`del` = 0 AND %s
-GROUP BY c.`companyId`, a.`typeId`
+WHERE a.type_id = b.id AND a.type_id > 0 AND b.del = 0 AND a.placement_id = c.id AND
+      c.company_id = d.id AND d.id = e.id AND c.del = 0 AND d.del = 0 AND %s
+GROUP BY c.company_id, a.type_id
 %s', $where, $toolStr);
 
 
         $res = $db->query($sql);
-        return $res->fetchAll(\PDO::FETCH_ASSOC);
+        return \Tk\Db\Map\ArrayObject::create($res, $tool);
     }
 
     /**

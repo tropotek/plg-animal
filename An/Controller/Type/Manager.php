@@ -79,7 +79,7 @@ class Manager extends AdminManagerIface
     {
         $filter = $this->table->getFilterValues();
         $filter['profileId'] = $this->profile->getId();
-        return \An\Db\TypeMap::create()->findFiltered($filter, $this->table->makeDbTool());
+        return \An\Db\TypeMap::create()->findFiltered($filter, $this->table->getTool());
     }
 
     /**
