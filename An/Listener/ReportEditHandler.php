@@ -104,6 +104,7 @@ JS;
 
     /**
      * @param \Tk\Event\FormEvent $event
+     * @throws \Tk\Db\Exception
      */
     public function onFormSubmit(\Tk\Event\FormEvent $event)
     {

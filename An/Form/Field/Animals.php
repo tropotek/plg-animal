@@ -26,6 +26,7 @@ class Animals extends \Tk\Form\Field\Iface
      * @param \An\Db\Type[]|\Tk\Db\Map\ArrayObject $typeList
      * @param \App\Db\Placement $placement
      * @throws \Tk\Exception
+     * @throws \Tk\Form\Exception
      */
     public function __construct($name, $typeList, $placement)
     {

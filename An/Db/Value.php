@@ -99,6 +99,7 @@ class Value extends \Tk\Db\Map\Model
 
     /**
      * @return null|Type|\Tk\Db\Map\Model|\Tk\Db\ModelInterface
+     * @throws \Tk\Db\Exception
      */
     public function getType()
     {
@@ -110,6 +111,7 @@ class Value extends \Tk\Db\Map\Model
 
     /**
      * @return \App\Db\Placement|null|\Tk\Db\Map\Model|\Tk\Db\ModelInterface
+     * @throws \Tk\Db\Exception
      */
     public function getPlacement()
     {
