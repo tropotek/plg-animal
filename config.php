@@ -8,6 +8,7 @@ if ($composer)
 
 /** @var \Tk\Routing\RouteCollection $routes */
 $routes = $config['site.routes'];
+if (!$routes) return;
 
 $params = array('role' => 'staff');
 
