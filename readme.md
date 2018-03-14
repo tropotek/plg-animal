@@ -31,7 +31,7 @@ Or add the following to your composer.json file:
 ```
 
 If you do not use Composer, you can grab the code from GitHub, and use any
-PSR-0 compatible autoloader (e.g. the [ems-animal](https://github.com/tropotek/plg-animal))
+PSR-0 compatible autoloader (e.g. the [plg-animal](https://github.com/tropotek/plg-animal))
 to load the classes.
 
 ## Introduction

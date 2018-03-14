@@ -16,7 +16,7 @@ class Plugin extends \App\Plugin\Iface
      */
     static function getInstance()
     {
-        return \Tk\Config::getInstance()->getPluginFactory()->getPlugin('ems-animal');
+        return \Tk\Config::getInstance()->getPluginFactory()->getPlugin('plg-animal');
     }
 
     /**
