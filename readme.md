@@ -1,6 +1,6 @@
 # EMS III Animals Plugin
 
-__Project:__ [ttek-plg/ems-animal](http://packagist.org/packages/ttek-plg/ems-animal)  
+__Project:__ [ttek-plg/plg-animal](http://packagist.org/packages/ttek-plg/plg-animal)  
 __Published:__ 01 Sep 2016
 __Web:__ <http://www.tropotek.com/>  
 __Authors:__ Michael Mifsud <http://www.tropotek.com/>  
@@ -15,23 +15,23 @@ EMS III Placement Animals Types Worked on plugin. Collects the number of animals
 
 ## Installation
 
-Available on Packagist ([ttek-plg/ems-animal](http://packagist.org/packages/ttek-plg/ems-animal))
+Available on Packagist ([ttek-plg/plg-animal](http://packagist.org/packages/ttek-plg/plg-animal))
 and as such installable via [Composer](http://getcomposer.org/).
 
 ```bash
-# composer require ttek-plg/ems-animal
+# composer require ttek-plg/plg-animal
 ```
 
 Or add the following to your composer.json file:
 
 ```json
 {
-  "ttek-plg/ems-animal": "~1.0"
+  "ttek-plg/plg-animal": "~1.0"
 }
 ```
 
 If you do not use Composer, you can grab the code from GitHub, and use any
-PSR-0 compatible autoloader (e.g. the [ems-animal](https://github.com/tropotek/ems-animal))
+PSR-0 compatible autoloader (e.g. the [ems-animal](https://github.com/tropotek/plg-animal))
 to load the classes.
 
 ## Introduction

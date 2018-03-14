@@ -1,5 +1,5 @@
 {
-    "name": "ttek-plg/ems-animal",
+    "name": "ttek-plg/plg-animal",
     "type": "ttek-plugin",
     "description": "EMS III Placement Animals Types Worked on plugin. Collects the number of animals students have worked on in their placement.",
     "keywords":  [
@@ -26,10 +26,12 @@
     },
     "extra":  {
         "branch-alias":  {
-            "dev-master": "1.0.x-dev"
+            "dev-master": "2.0.x-dev"
         }
     },
     "require":  {
+        "ttek/tk-framework": "~2.0",
+        "ttek/tk-uni": "~2.0",
         "ttek/tk-installers": "~2.0"
     }
 }
