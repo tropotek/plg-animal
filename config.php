@@ -15,8 +15,8 @@ $params = array('role' => 'staff');
 $routes->add('Animal Type Manager', new \Tk\Routing\Route('/staff/animalTypeManager.html', 'An\Controller\Type\Manager::doDefault', $params));
 $routes->add('Animal Type Edit', new \Tk\Routing\Route('/staff/animalTypeEdit.html', 'An\Controller\Type\Edit::doDefault', $params));
 
-$params['courseCode'] = '';
-$routes->add('Animal Type Report', new \Tk\Routing\Route('/staff/{courseCode}/animalTypeReport.html', 'An\Controller\Report::doDefault', $params));
+$params['subjectCode'] = '';
+$routes->add('Animal Type Report', new \Tk\Routing\Route('/staff/{subjectCode}/animalTypeReport.html', 'An\Controller\Report::doDefault', $params));
 
 
 

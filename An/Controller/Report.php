@@ -40,8 +40,8 @@ class Report extends AdminManagerIface
     public function doDefault(Request $request)
     {
         $this->profile = \App\Db\ProfileMap::create()->find($request->get('profileId'));
-        if (!$this->profile && $this->getCourse())
-            $this->profile = $this->getCourse()->getProfile();
+        if (!$this->profile && $this->getSubject())
+            $this->profile = $this->getSubject()->getProfile();
 
         $this->table = \App\Config::getInstance()->createTable(\Tk\Object::basename($this).'_reportingList');
         $this->table->setRenderer(\App\Config::getInstance()->createTableRenderer($this->table));
@@ -79,16 +79,16 @@ class Report extends AdminManagerIface
 
         $tool = $this->table->getTool('d.name, a.name');
         $filter = $this->table->getFilterValues();
-        $filter['profileId'] = $this->getCourse()->profileId;
-        $filter['courseId'] = $this->getCourse()->getId();
+        $filter['profileId'] = $this->getSubject()->profileId;
+        $filter['subjectId'] = $this->getSubject()->getId();
 
         $where = '';
 
         if (!empty($filter['companyId'])) {
             $where .= sprintf('c.company_id = %d AND ', (int)$filter['companyId']);
         }
-        if (!empty($filter['courseId'])) {
-            $where .= sprintf('c.course_id = %d AND ', (int)$filter['courseId']);
+        if (!empty($filter['subjectId'])) {
+            $where .= sprintf('c.subject_id = %d AND ', (int)$filter['subjectId']);
         } else {
             if (!empty($filter['profileId'])) {
                 $where .= sprintf('b.profile_id = %d AND ', (int)$filter['profileId']);

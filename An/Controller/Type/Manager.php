@@ -46,8 +46,8 @@ class Manager extends AdminManagerIface
     public function doDefault(Request $request)
     {
         $this->profile = \App\Db\ProfileMap::create()->find($request->get('profileId'));
-        if (!$this->profile && $this->getCourse())
-            $this->profile = $this->getCourse()->getProfile();
+        if (!$this->profile && $this->getSubject())
+            $this->profile = $this->getSubject()->getProfile();
 
         $this->editUrl = \App\Uri::createHomeUrl('/animalTypeEdit.html');
 

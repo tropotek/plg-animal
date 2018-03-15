@@ -123,15 +123,15 @@ class ValueMap extends \App\Db\Mapper
             $where .= sprintf('a.placement_id = %s AND ', (int)$filter['placementId']);
         }
 
-        if (!empty($filter['profileId']) || !empty($filter['courseId'])) {
+        if (!empty($filter['profileId']) || !empty($filter['subjectId'])) {
             $from .= sprintf(', %s b', $this->quoteTable('animal_type'));
             $where .= sprintf('a.type_id = b.id AND ');
             if (!empty($filter['profileId'])) {
                 $where .= sprintf('b.profile_id = %s AND ', (int)$filter['profileId']);
             }
-            if (!empty($filter['courseId'])) {
+            if (!empty($filter['subjectId'])) {
                 $from .= sprintf(', %s c', $this->quoteTable('placement'));
-                $where .= sprintf('a.placement_id = c.id AND c.course_id = %s AND ', (int)$filter['courseId']);
+                $where .= sprintf('a.placement_id = c.id AND c.subject_id = %s AND ', (int)$filter['subjectId']);
             }
         }
 

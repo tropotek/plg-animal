@@ -63,7 +63,7 @@ class Value extends \Tk\Db\Map\Model
 
 
     /**
-     * Course constructor.
+     * constructor.
      */
     public function __construct()
     {
@@ -135,7 +135,7 @@ class Value extends \Tk\Db\Map\Model
             $errors['placementId'] = 'Invalid Placement ID';
         }
         if (!$this->name) {
-            $errors['name'] = 'Please enter a valid course name';
+            $errors['name'] = 'Please enter a valid name';
         }
 
         return $errors;

@@ -36,8 +36,8 @@ class ReportEditHandler implements Subscriber
         /** @var \App\Controller\Placement\ReportEdit $controller */
         $controller = $event->getForm()->get('controller');
         if ($controller instanceof \App\Controller\Placement\ReportEdit) {
-            if ($controller->getCourse() && $controller->getPlacement()) {
-                $this->animalTypes = \An\Db\TypeMap::create()->findFiltered(array('profileId' => $controller->getPlacement()->getCourse()->profileId));
+            if ($controller->getSubject() && $controller->getPlacement()) {
+                $this->animalTypes = \An\Db\TypeMap::create()->findFiltered(array('profileId' => $controller->getPlacement()->getSubject()->profileId));
                 if (!$this->animalTypes->count()) return;
                 $this->controller = $controller;
                 $this->form = $controller->getForm();
@@ -56,7 +56,7 @@ class ReportEditHandler implements Subscriber
                 ->setNotes('Is this a non-animal placement?<br/><em>(Note: Checking this box will delete any existing animal data)</em>');
             $this->form->addField(new \An\Form\Field\Animals('animals', $this->animalTypes, $this->controller->getPlacement()))
                 ->setFieldset('Animal Types')->setNotes('Report the species and number of cases you were involved with while on your '.
-                    \App\Db\Phrase::findValue('placement', $this->controller->getPlacement()->getCourse()->profileId).'.');
+                    \App\Db\Phrase::findValue('placement', $this->controller->getPlacement()->getSubject()->profileId).'.');
 
             $formRenderer = $this->form->getRenderer();
             $template = $formRenderer->getTemplate();

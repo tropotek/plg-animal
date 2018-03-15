@@ -68,7 +68,7 @@ class Type extends \Tk\Db\Map\Model
 
 
     /**
-     * Course constructor.
+     * constructor.
      */
     public function __construct()
     {
@@ -107,7 +107,7 @@ class Type extends \Tk\Db\Map\Model
             $errors['profileId'] = 'Invalid Profile ID';
         }
         if (!$this->name) {
-            $errors['name'] = 'Please enter a valid course name';
+            $errors['name'] = 'Please enter a valid name';
         }
 
         return $errors;
