@@ -17,6 +17,7 @@ class TypeMap extends \App\Db\Mapper
 
     /**
      * @return \Tk\DataMap\DataMap
+     * @throws \Tk\Db\Exception
      */
     public function getDbMap()
     {
@@ -62,6 +63,7 @@ class TypeMap extends \App\Db\Mapper
      * @param array $filter
      * @param Tool $tool
      * @return ArrayObject|Type[]
+     * @throws \Tk\Db\Exception
      */
     public function findFiltered($filter = array(), $tool = null)
     {

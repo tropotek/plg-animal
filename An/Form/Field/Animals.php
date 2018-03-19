@@ -67,6 +67,7 @@ class Animals extends \Tk\Form\Field\Iface
      * Get the element HTML
      *
      * @return string|\Dom\Template
+     * @throws \ReflectionException
      */
     public function show()
     {

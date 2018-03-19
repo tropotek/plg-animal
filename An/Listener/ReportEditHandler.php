@@ -30,6 +30,8 @@ class ReportEditHandler implements Subscriber
 
     /**
      * @param \Tk\Event\FormEvent $event
+     * @throws \Tk\Db\Exception
+     * @throws \Tk\Exception
      */
     public function onFormPreInit(\Tk\Event\FormEvent $event)
     {
@@ -47,7 +49,9 @@ class ReportEditHandler implements Subscriber
 
     /**
      * @param \Tk\Event\FormEvent $event
+     * @throws \Tk\Db\Exception
      * @throws \Tk\Exception
+     * @throws \Tk\Form\Exception
      */
     public function onFormInit(\Tk\Event\FormEvent $event)
     {

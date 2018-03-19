@@ -54,6 +54,7 @@ class Edit extends AdminEditIface
     }
 
     /**
+     * @throws \Tk\Exception
      * @throws \Tk\Form\Exception
      */
     protected function buildForm() 
@@ -74,6 +75,9 @@ class Edit extends AdminEditIface
 
     /**
      * @param \Tk\Form $form
+     * @throws \ReflectionException
+     * @throws \Tk\Db\Exception
+     * @throws \Tk\Exception
      */
     public function doSubmit($form)
     {
