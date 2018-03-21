@@ -95,12 +95,24 @@ class Report extends AdminManagerIface
             }
         }
 
-        if (!empty($filter['dateStart']) && !empty($filter['dateEnd'])) {     // Contains
-            $start = $filter['dateStart'];
-            $end = $filter['dateEnd'];
-            $where .= sprintf('c.dateStart >= %s AND ', $db->quote(\Tk\Date::floor($start)->format(\Tk\Date::FORMAT_ISO_DATETIME)) );
-            $where .= sprintf('c.dateStart <= %s AND ', $db->quote(\Tk\Date::ceil($end)->format(\Tk\Date::FORMAT_ISO_DATETIME)) );
+//        if (!empty($filter['dateStart']) && !empty($filter['dateEnd'])) {     // Contains
+//            $start = \Tk\Date::create($filter['dateStart']);
+//            $end = \Tk\Date::create($filter['dateEnd']);
+//            $where .= sprintf('c.date_start >= %s AND ', $db->quote(\Tk\Date::floor($start)->format(\Tk\Date::FORMAT_ISO_DATETIME)) );
+//            $where .= sprintf('c.date_start <= %s AND ', $db->quote(\Tk\Date::ceil($end)->format(\Tk\Date::FORMAT_ISO_DATETIME)) );
+//        }
+
+        if (!empty($filter['dateStart'])) {     // starts with
+            $start = \Tk\Date::create($filter['dateStart']);
+            $where .= sprintf('c.date_start >= %s AND ', $db->quote(\Tk\Date::floor($start)->format(\Tk\Date::FORMAT_ISO_DATETIME)) );
         }
+        if (!empty($filter['dateEnd'])) {
+            $end = \Tk\Date::create($filter['dateEnd']);
+            $where .= sprintf('c.date_start <= %s AND ', $db->quote(\Tk\Date::ceil($end)->format(\Tk\Date::FORMAT_ISO_DATETIME)) );
+        }
+
+
+
         if ($where) {
             $where = substr($where, 0, -4);
         }
@@ -128,6 +140,7 @@ GROUP BY c.company_id, a.type_id
 
 
         $res = $db->query($sql);
+        //vd($sql);
         return \Tk\Db\Map\ArrayObject::create($res, $tool);
     }
 

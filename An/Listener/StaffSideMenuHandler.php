@@ -28,7 +28,7 @@ class StaffSideMenuHandler implements Subscriber
             /** @var \App\Ui\Sidebar\StaffMenu $sideBar */
             $sideBar = $page->getSidebar();
             if ($sideBar instanceof \App\Ui\Sidebar\StaffMenu) {
-                $sideBar->addReportUrl(\Tk\Ui\Link::create('Animals', \App\Uri::createSubjectUrl('/animalTypeReport.html'), 'fa fa-paw'));
+                $sideBar->addReportUrl(\Tk\Ui\Link::create('Animal Type Report', \App\Uri::createSubjectUrl('/animalTypeReport.html'), 'fa fa-paw'));
             }
         }
     }
