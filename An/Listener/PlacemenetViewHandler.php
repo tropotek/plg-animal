@@ -9,7 +9,7 @@ use An\Plugin;
  * @see http://www.tropotek.com/
  * @license Copyright 2015 Michael Mifsud
  */
-class PlacemenetReportViewHandler implements Subscriber
+class PlacemenetViewHandler implements Subscriber
 {
 
     /**
@@ -30,13 +30,17 @@ class PlacemenetReportViewHandler implements Subscriber
         if ($controller instanceof \App\Controller\Student\Placement\View) {
             $this->controller = $controller;
             $view = $this->controller->getReportView();
+            if (!$view) return;
             $template = $view->getTemplate();
             $report = $view->getReport();
             $placement = $report->getPlacement();
 
 
             $list = \An\Db\ValueMap::create()->findFiltered(array('placementId' => $placement->getId()));
-            if(count($list) == 1 && current($list)->name == '') {
+
+            /** @var \An\Db\Value $current */
+            $current = $list->current();
+            if(count($list) == 1 && $current && $current->name == '') {
                 // Non-Annimal placement
                 $template->appendHtml('report-info',
                     sprintf('<dt>Animal Types:</dt> <dd>Non-Animal</dd>'));

@@ -45,7 +45,7 @@ class SetupHandler implements Subscriber
             if (\Uni\Config::getInstance()->getSubject()) {
                 $dispatcher->addSubscriber(new \An\Listener\StaffSideMenuHandler());
                 $dispatcher->addSubscriber(new \An\Listener\ReportEditHandler());
-                $dispatcher->addSubscriber(new \An\Listener\PlacemenetReportViewHandler());
+                $dispatcher->addSubscriber(new \An\Listener\PlacemenetViewHandler());
 //                $dispatcher->addSubscriber(new \An\Listener\PlacementManagerButtonHandler($subject));
 //                $dispatcher->addSubscriber(new \An\Listener\SubjectUserListButtonHandler($subject));
             }
