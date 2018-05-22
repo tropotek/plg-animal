@@ -103,11 +103,11 @@ class Report extends AdminManagerIface
 //        }
 
         if (!empty($filter['dateStart'])) {     // starts with
-            $start = \Tk\Date::create($filter['dateStart']);
+            $start = \Tk\Date::createFormDate($filter['dateStart']);
             $where .= sprintf('c.date_start >= %s AND ', $db->quote(\Tk\Date::floor($start)->format(\Tk\Date::FORMAT_ISO_DATETIME)) );
         }
         if (!empty($filter['dateEnd'])) {
-            $end = \Tk\Date::create($filter['dateEnd']);
+            $end = \Tk\Date::createFormDate($filter['dateEnd']);
             $where .= sprintf('c.date_start <= %s AND ', $db->quote(\Tk\Date::ceil($end)->format(\Tk\Date::FORMAT_ISO_DATETIME)) );
         }
 
