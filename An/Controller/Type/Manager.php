@@ -56,7 +56,7 @@ class Manager extends AdminManagerIface
         $this->getActionPanel()->add(\Tk\Ui\Button::create('New Type',
             $u->set('profileId', $this->profile->getId()), 'fa fa-paw fa-add-action'));
 
-        $this->table = \App\Config::getInstance()->createTable(\Tk\Object::basename($this).'_typeList');
+        $this->table = \App\Config::getInstance()->createTable(\Tk\ObjectUtil::basename($this).'_typeList');
         $this->table->setRenderer(\App\Config::getInstance()->createTableRenderer($this->table));
 
         $this->table->addCell(new \Tk\Table\Cell\Checkbox('id'));
