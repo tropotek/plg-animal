@@ -118,7 +118,7 @@ JS;
             $nonAnimal = $this->form->getFieldValue('nonAnimal');
 
             // Check if animals are required
-            if (!$nonAnimal && !count($list)) {
+            if (!$nonAnimal && (!is_array($list) || !count($list))) {
                 $this->form->addFieldError('animals', 'Please enter the type and number of animals.');
                 $this->form->addError('Please enter the type and number of animals.');
             }
