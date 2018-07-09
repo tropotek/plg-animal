@@ -12,7 +12,11 @@ use An\Plugin;
 class SetupHandler implements Subscriber
 {
 
-
+    /**
+     * @param \Tk\Event\GetResponseEvent $event
+     * @throws \Tk\Db\Exception
+     * @throws \Tk\Exception
+     */
     public function onRequest(\Tk\Event\GetResponseEvent $event)
     {
         /* NOTE:

@@ -1,11 +1,9 @@
 <?php
 namespace An\Controller\Type;
 
-use App\Controller\AdminManagerIface;
 use Dom\Template;
 use Tk\Form\Field;
 use Tk\Request;
-
 
 
 /**
@@ -13,7 +11,7 @@ use Tk\Request;
  * @see http://www.tropotek.com/
  * @license Copyright 2015 Michael Mifsud
  */
-class Manager extends AdminManagerIface
+class Manager extends \App\Controller\AdminManagerIface
 {
 
     /**
@@ -34,7 +32,6 @@ class Manager extends AdminManagerIface
      */
     public function __construct()
     {
-        parent::__construct();
         $this->setPageTitle('Animal Type Manager');
     }
 
@@ -47,8 +44,10 @@ class Manager extends AdminManagerIface
     public function doDefault(Request $request)
     {
         $this->profile = \App\Db\ProfileMap::create()->find($request->get('profileId'));
-        if (!$this->profile && $this->getSubject())
-            $this->profile = $this->getSubject()->getProfile();
+        /** @var \App\Db\Subject $subject */
+        $subject = $this->getConfig()->getSubject();
+        if (!$this->profile && $subject)
+            $this->profile = $subject->getProfile();
 
         $this->editUrl = \App\Uri::createHomeUrl('/animalTypeEdit.html');
 
@@ -77,6 +76,11 @@ class Manager extends AdminManagerIface
 
     }
 
+    /**
+     * @return \An\Db\Type[]|\Tk\Db\Map\ArrayObject
+     * @throws \Tk\Db\Exception
+     * @throws \Tk\Exception
+     */
     protected function getList()
     {
         $filter = $this->table->getFilterValues();

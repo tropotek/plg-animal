@@ -1,7 +1,6 @@
 <?php
 namespace An\Controller;
 
-use App\Controller\AdminManagerIface;
 use Dom\Template;
 use Tk\Form\Field;
 use Tk\Request;
@@ -13,8 +12,13 @@ use Tk\Request;
  * @see http://www.tropotek.com/
  * @license Copyright 2015 Michael Mifsud
  */
-class Report extends AdminManagerIface
+class Report extends \App\Controller\AdminManagerIface
 {
+
+    /**
+     * @var \App\Db\Subject
+     */
+    private $subject = null;
 
     /**
      * @var \App\Db\Profile
@@ -27,7 +31,6 @@ class Report extends AdminManagerIface
      */
     public function __construct()
     {
-        parent::__construct();
         $this->setPageTitle('Animal Type Report');
     }
 
@@ -40,8 +43,10 @@ class Report extends AdminManagerIface
     public function doDefault(Request $request)
     {
         $this->profile = \App\Db\ProfileMap::create()->find($request->get('profileId'));
-        if (!$this->profile && $this->getSubject())
-            $this->profile = $this->getSubject()->getProfile();
+
+        $this->subject = $this->getConfig()->getSubject();
+        if (!$this->profile && $this->subject)
+            $this->profile = $this->subject->getProfile();
 
         $this->table = \App\Config::getInstance()->createTable(\Tk\ObjectUtil::basename($this).'_reportingList');
         $this->table->setRenderer(\App\Config::getInstance()->createTableRenderer($this->table));
@@ -76,11 +81,10 @@ class Report extends AdminManagerIface
 
         // Cells Required:     | companyName | isAcademic | animalName | avgUnits | numPlacements | numAnimals |
         //                     ---------------------------------------------------------------------------------
-
         $tool = $this->table->getTool('d.name, a.name');
         $filter = $this->table->getFilterValues();
-        $filter['profileId'] = $this->getSubject()->profileId;
-        $filter['subjectId'] = $this->getSubject()->getId();
+        $filter['profileId'] = $this->subject->profileId;
+        $filter['subjectId'] = $this->subject->getId();
 
         $where = '';
 

@@ -29,7 +29,7 @@ class ProfileEditHandler implements Subscriber
             if ($controller->getUser()->isStaff() && $controller->getProfile()) {
                 /** @var \Tk\Ui\Admin\ActionPanel $actionPanel */
                 $actionPanel = $controller->getActionPanel();
-                $actionPanel->addButton(\Tk\Ui\Button::create('Animal Types',
+                $actionPanel->add(\Tk\Ui\Button::create('Animal Types',
                     \App\Uri::createHomeUrl('/animalTypeManager.html')->set('profileId', $controller->getProfile()->getId()), 'fa fa-paw'));
             }
         }
