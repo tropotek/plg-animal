@@ -1,5 +1,10 @@
 #CHANGELOG#
 
+Ver 2.0.8 [2018-07-19]:
+-------------------------------
+Fixed table and form ids, fixed some styling
+
+
 Ver 2.0.6 [2018-07-10]:
 -------------------------------
 Minor Code Updates
