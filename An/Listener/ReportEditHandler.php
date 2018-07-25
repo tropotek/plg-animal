@@ -30,8 +30,7 @@ class ReportEditHandler implements Subscriber
 
     /**
      * @param \Tk\Event\FormEvent $event
-     * @throws \Tk\Db\Exception
-     * @throws \Tk\Exception
+     * @throws \Exception
      */
     public function onFormPreInit(\Tk\Event\FormEvent $event)
     {
@@ -49,9 +48,7 @@ class ReportEditHandler implements Subscriber
 
     /**
      * @param \Tk\Event\FormEvent $event
-     * @throws \Tk\Db\Exception
-     * @throws \Tk\Exception
-     * @throws \Tk\Form\Exception
+     * @throws \Exception
      */
     public function onFormInit(\Tk\Event\FormEvent $event)
     {
@@ -77,13 +74,12 @@ jQuery(function($) {
 JS;
             $template->appendJs($js, array('data-jsl-priority' => 10));
 
-
         }
     }
 
     /**
      * @param \Tk\Event\FormEvent $event
-     * @throws \Tk\Exception
+     * @throws \Exception
      */
     public function onFormLoad(\Tk\Event\FormEvent $event)
     {
@@ -91,7 +87,6 @@ JS;
             $valueList = \An\Db\ValueMap::create()->findFiltered(array('placementId' => $this->controller->getPlacement()->getId()));
             /** @var \An\Db\Value $currentValue */
             $currentValue = $valueList->current();
-
             if ($currentValue && $currentValue->typeId == 0) {
                 $this->form->setFieldValue('nonAnimal', true);
             } else {
@@ -108,7 +103,7 @@ JS;
 
     /**
      * @param \Tk\Event\FormEvent $event
-     * @throws \Tk\Db\Exception
+     * @throws \Exception
      */
     public function onFormSubmit(\Tk\Event\FormEvent $event)
     {
