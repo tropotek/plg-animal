@@ -1,5 +1,10 @@
 #CHANGELOG#
 
+Ver 2.0.10 [2018-07-26]:
+-------------------------------
+Updated the form field group renderer to be more usable
+
+
 Ver 2.0.8 [2018-07-19]:
 -------------------------------
 Fixed table and form ids, fixed some styling
