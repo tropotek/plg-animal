@@ -10,7 +10,7 @@ if ($composer)
 $routes = $config->getRouteCollection();
 if (!$routes) return;
 
-$params = array('role' => 'staff');
+$params = array();
 $routes->add('Animal Type Manager', new \Tk\Routing\Route('/staff/animalTypeManager.html', 'An\Controller\Type\Manager::doDefault', $params));
 $routes->add('Animal Type Edit', new \Tk\Routing\Route('/staff/animalTypeEdit.html', 'An\Controller\Type\Edit::doDefault', $params));
 
