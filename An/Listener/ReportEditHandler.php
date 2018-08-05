@@ -136,7 +136,7 @@ JS;
             } else {
                 foreach ($list as $typeId => $value) {
                     /** @var \An\Db\Type $type */
-                    $type = \An\Db\Type::getMapper()->find($typeId);
+                    $type = \An\Db\TypeMap::create()->find($typeId);
                     $valueObj = \An\Db\Value::create($placement, $type, $value);
                     $valueObj->save();
                 }
