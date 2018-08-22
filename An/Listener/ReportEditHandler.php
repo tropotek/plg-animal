@@ -55,20 +55,27 @@ class ReportEditHandler implements Subscriber
         if ($this->form) {
             $this->form->addField(new \Tk\Form\Field\Checkbox('nonAnimal'))->setFieldset('Animal Types')
                 ->setNotes('Is this a non-animal placement?<br/><em>(Note: Checking this box will delete any existing animal data)</em>');
-            $this->form->addField(new \An\Form\Field\Animals('animals', $this->animalTypes, $this->controller->getPlacement()))
+
+            $this->form->addField(new \An\Form\Field\AnimalSelect('animals', $this->animalTypes, $this->controller->getPlacement()))
                 ->setFieldset('Animal Types')->setNotes('Report the species and number of cases you were involved with while on your '.
                     \App\Db\Phrase::findValue('placement', $this->controller->getPlacement()->getSubject()->profileId).'.');
 
+
             $formRenderer = $this->form->getRenderer();
             $template = $formRenderer->getTemplate();
+
             $js = <<<JS
 jQuery(function($) {
   
-  var animalField = $('.tk-animals-field').animalField({}).data('animalField');
-  var f = animalField.getElement().closest('.AnimalTypes').find('input[type=checkbox]').on('change', function (e) {
-      animalField.enable(!$(this).prop('checked'));
-  });
-  animalField.enable(!f.prop('checked'));
+  $('.tk-animal-select').animalSelect();
+  
+  $('.tk-nonanimal input[type="checkbox"]').on('change', function () {
+    if ($(this).prop('checked')) {
+      $('.tk-animal-select').find('input, select, button').attr('disabled', 'disabled');
+    } else {
+      $('.tk-animal-select').find('input, select, button').removeAttr('disabled');
+    }
+  }).trigger('change');
   
 });
 JS;
@@ -122,9 +129,6 @@ JS;
                 return;
             }
 
-            // Remove existing animals
-            \An\Db\ValueMap::create()->removeAllByPlacementId($placement->id);
-
             // re-add all animals in the list
             if ($nonAnimal) {
                 $valueObj = new \An\Db\Value();
@@ -134,7 +138,10 @@ JS;
                 $valueObj->notes = 'Non Animal Placement';
                 $valueObj->save();
             } else {
+                // Remove existing animals
+                \An\Db\ValueMap::create()->removeAllByPlacementId($placement->id);
                 foreach ($list as $typeId => $value) {
+                    if (!$typeId || !$value) continue;
                     /** @var \An\Db\Type $type */
                     $type = \An\Db\TypeMap::create()->find($typeId);
                     $valueObj = \An\Db\Value::create($placement, $type, $value);

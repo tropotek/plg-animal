@@ -8,7 +8,7 @@ namespace An\Form\Field;
  * @see http://www.tropotek.com/
  * @license Copyright 2015 Michael Mifsud
  */
-class Animals extends \Tk\Form\Field\Iface
+class AnimalSelect extends \Tk\Form\Field\Iface
 {
     /**
      * @var \An\Db\Type[]|\Tk\Db\Map\ArrayObject
@@ -25,8 +25,7 @@ class Animals extends \Tk\Form\Field\Iface
      * @param string $name
      * @param \An\Db\Type[]|\Tk\Db\Map\ArrayObject $typeList
      * @param \App\Db\Placement $placement
-     * @throws \Tk\Exception
-     * @throws \Tk\Form\Exception
+     * @throws \Exception
      */
     public function __construct($name, $typeList, $placement)
     {
@@ -64,61 +63,52 @@ class Animals extends \Tk\Form\Field\Iface
 
 
     /**
-     * Get the element HTML
-     *
      * @return string|\Dom\Template
      * @throws \ReflectionException
      */
     public function show()
     {
         $template = $this->getTemplate();
-
-        $template->appendJsUrl(\Tk\Uri::create(\An\Plugin::getInstance()->getPluginPath().'/An/Form/Field/jquery.animalField.js'));
-
-        // Setup the javascript template
-        $repeat = $template->getRepeat('row');
-        $repeat->addCss('row', 'animals-row-template hide');
-        $repeat->setAttr('valueId', 'name', $this->getName().'-valueId[]');
-        $repeat->setAttr('typeId', 'name', $this->getName().'-typeId[]');
-        $repeat->setAttr('value', 'name', $this->getName().'-value[]');
-        $template->setAttr('typeId', 'name', $this->getName().'-typeId-add');
-        $template->setAttr('value', 'name', $this->getName().'-value-add');
-
-        /** @var \Dom\Form\Select $selEl */
-        $selEl = $repeat->getForm()->getFormElement('typeId');
-        /** @var \Dom\Form\Select $selEl2 */
-        $selEl2 = $template->getForm()->getFormElement('typeId-add');
-        /** @var \An\Db\Type $type */
-        foreach ($this->typeList as $type) {
-            $selEl->appendOption($type->name, $type->id);
-            $selEl2->appendOption($type->name, $type->id);
-        }
-        $repeat->appendRepeat();
-
+        $template->appendJsUrl(\Tk\Uri::create(\An\Plugin::getInstance()->getPluginPath().'/An/Form/Field/jquery.animalSelect.js'));
         $list = $this->getValue();
         if (is_array($list)) {
             foreach ($list as $typeId => $value) {
                 $repeat = $template->getRepeat('row');
-                $repeat->setAttr('valueId', 'name', $this->getName().'-valueId[]');
-                $repeat->setAttr('typeId', 'name', $this->getName().'-typeId[]');
-                $repeat->setAttr('value', 'name', $this->getName().'-value[]');
-                /** @var \Dom\Form\Select $selEl */
-                $selEl = $repeat->getForm()->getFormElement('typeId');
-
-                /** @var \An\Db\Type $type */
-                foreach ($this->typeList as $type) {
-                    $selEl->appendOption($type->name, $type->id);
-                }
-                $selEl->setValue($typeId);
-                //$repeat->getForm()->getFormElement('valueId')->setValue('0');
-                $repeat->getForm()->getFormElement('value')->setValue($value);
-
+                $this->showRow($repeat, $typeId, $value);
                 $repeat->appendRepeat();
             }
         }
+        // Always add a blank row
+        $repeat = $template->getRepeat('row');
+        $this->showRow($repeat);
+        $repeat->addClass('row', 'animal-input-add');
+        $repeat->addCss('del', 'hide');
+        $repeat->removeCss('add', 'hide');
+        $repeat->appendRepeat();
 
         return $template;
     }
+
+    /**
+     * @param \Dom\Repeat $repeat
+     * @param int $typeId
+     * @param int $value
+     */
+    protected function showRow($repeat, $typeId = 0, $value = 0)
+    {
+        $repeat->setAttr('valueId', 'name', $this->getName().'-valueId[]');
+        $repeat->setAttr('typeId', 'name', $this->getName().'-typeId[]');
+        $repeat->setAttr('value', 'name', $this->getName().'-value[]');
+        /** @var \Dom\Form\Select $selEl */
+        $selEl = $repeat->getForm()->getFormElement('typeId');
+        /** @var \An\Db\Type $type */
+        foreach ($this->typeList as $type) {
+            $selEl->appendOption($type->name, $type->id);
+        }
+        $selEl->setValue($typeId);
+        $repeat->getForm()->getFormElement('value')->setValue($value);
+    }
+
 
     /**
      * @return \Dom\Template
@@ -126,10 +116,10 @@ class Animals extends \Tk\Form\Field\Iface
     public function __makeTemplate()
     {
         $xhtml = <<<HTML
-<div class="tk-animals-field" var="field">
+<div class="tk-animal-select" var="field">
 
-  <div class="animals-input-block">
-    <div class="form-group animals-input" repeat="row" var="row">
+  <div class="animal-input-block">
+    <div class="form-group animal-input-row" repeat="row" var="row">
       <input type="hidden" name="valueId" value="0" var="valueId"/>
       <div class="col-xs-4">
         <select name="typeId" class="form-control input-sm animals-type-id" var="typeId" style="padding: 0;">
@@ -141,25 +131,11 @@ class Animals extends \Tk\Form\Field\Iface
       </div>
       <div class="col-xs-4">
         <button type="button" class="btn btn-danger btn-xs animals-del" var="del" title="Remove this animal type from your list"><i class="fa fa-minus"></i></button>
+        <button type="button" class="btn btn-primary btn-xs animals-add hide" var="add" title="Add a new animal type to your list"><i class="fa fa-plus"></i></button>
       </div>
     </div>
   </div>
 
-  <div><hr/></div>
-  
-  <div class="form-group animals-input-add">
-    <div class="col-xs-4">
-      <select name="typeId-add" class="form-control input-sm animals-type-id-add" var="typeId">
-        <option value="">-- Select Animal --</option>
-      </select>
-    </div>
-    <div class="col-xs-4">
-      <input type="text" class="form-control input-sm animals-value-add" placeholder="Animals Treated" name="value-add" value="0" var="value"/>
-    </div>
-    <div class="col-xs-4">
-      <button type="button" class="btn btn-primary btn-xs animals-add" var="add" title="Add a new animal type to your list"><i class="fa fa-plus"></i></button>
-    </div>
-  </div>
 </div>
 HTML;
         return \Dom\Loader::load($xhtml);
