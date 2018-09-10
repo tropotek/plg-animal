@@ -1,5 +1,11 @@
 #CHANGELOG#
 
+Ver 2.0.18 [2018-09-11]:
+-------------------------------
+  - Fixed Historic placement sending email issue
+  - Fixed animals input field layout.
+
+
 Ver 2.0.16 [2018-08-23]:
 -------------------------------
   - Fixed the Animals select plugin
