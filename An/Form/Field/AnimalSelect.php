@@ -119,7 +119,7 @@ class AnimalSelect extends \Tk\Form\Field\Iface
 <div class="tk-animal-select" var="field">
 
   <div class="animal-input-block">
-    <div class="form-group animal-input-row" repeat="row" var="row">
+    <div class="animal-input-row clearfix" repeat="row" var="row">
       <input type="hidden" name="valueId" value="0" var="valueId"/>
       <div class="col-xs-4">
         <select name="typeId" class="form-control input-sm animals-type-id" var="typeId" style="padding: 0;">
