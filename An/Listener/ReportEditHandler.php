@@ -2,7 +2,6 @@
 namespace An\Listener;
 
 use Tk\Event\Subscriber;
-use An\Plugin;
 
 /**
  * @author Michael Mifsud <info@tropotek.com>
@@ -60,7 +59,6 @@ class ReportEditHandler implements Subscriber
                 ->setFieldset('Animal Types')->setNotes('Report the species and number of cases you were involved with while on your '.
                     \App\Db\Phrase::findValue('placement', $this->controller->getPlacement()->getSubject()->profileId).'.');
 
-
             $formRenderer = $this->form->getRenderer();
             $template = $formRenderer->getTemplate();
 
@@ -94,16 +92,22 @@ JS;
             $valueList = \An\Db\ValueMap::create()->findFiltered(array('placementId' => $this->controller->getPlacement()->getId()));
             /** @var \An\Db\Value $currentValue */
             $currentValue = $valueList->current();
+            $valueList->rewind();
             if ($currentValue && $currentValue->typeId == 0) {
                 $this->form->setFieldValue('nonAnimal', true);
             } else {
                 // Map to field value
-                $vals = array();
+                $vals = array(
+                    'animals-typeId' => array(),
+                    'animals-value' => array()
+                );
                 /** @var \An\Db\Value $value */
                 foreach ($valueList as $value) {
-                    $vals[$value->typeId] = $value->value;
+                    $vals['animals-typeId'][] = $value->typeId;
+                    $vals['animals-value'][] = $value->value;
                 }
-                $this->form->setFieldValue('animals', $vals);
+                $this->form->load($vals);
+
             }
         }
     }
