@@ -56,7 +56,6 @@ class AnimalSelect extends \Tk\Form\Field\Iface
                     $vals[$typeId] += $valueArr[$i];
             }
         }
-        vd('AnimalSelect::load()', $vals);
         if (!count($vals)) $vals = null;
         $this->setValue($vals);
         return $this;
