@@ -52,10 +52,10 @@ class ReportEditHandler implements Subscriber
     public function onFormInit(\Tk\Event\FormEvent $event)
     {
         if ($this->form) {
-            $this->form->addField(new \Tk\Form\Field\Checkbox('nonAnimal'))->setFieldset('Animal Types')
+            $this->form->appendField(new \Tk\Form\Field\Checkbox('nonAnimal'))->setFieldset('Animal Types')
                 ->setNotes('Is this a non-animal placement?<br/><em>(Note: Checking this box will delete any existing animal data)</em>');
 
-            $this->form->addField(new \An\Form\Field\AnimalSelect('animals', $this->animalTypes, $this->controller->getPlacement()))
+            $this->form->appendField(new \An\Form\Field\AnimalSelect('animals', $this->animalTypes, $this->controller->getPlacement()))
                 ->setFieldset('Animal Types')->setNotes('Report the species and number of cases you were involved with while on your '.
                     \App\Db\Phrase::findValue('placement', $this->controller->getPlacement()->getSubject()->profileId).'.');
 
