@@ -54,9 +54,10 @@ class Report extends \App\Controller\AdminManagerIface
         $this->table->addCell(new \Tk\Table\Cell\Text('companyName'))->addCss('key');
         $this->table->addCell(new \Tk\Table\Cell\Boolean('academic'));
         $this->table->addCell(new \Tk\Table\Cell\Text('species'));
+        $this->table->addCell(new \Tk\Table\Cell\Text('placementCount'))->setLabel('Placements');
+        $this->table->addCell(new \Tk\Table\Cell\Text('units'))->setLabel('Total ' . $this->getProfile()->unitLabel);
         $this->table->addCell(new \Tk\Table\Cell\Text('duration'))->setLabel('Avg. Duration');
-        $this->table->addCell(new \Tk\Table\Cell\Text('rotationCount'))->setLabel('Rotations Per Year');
-        $this->table->addCell(new \Tk\Table\Cell\Text('studentPerRotation'));
+        //$this->table->addCell(new \Tk\Table\Cell\Text('studentPerRotation'));
         $this->table->addCell(new \Tk\Table\Cell\Text('animalCount'))->setLabel('Patients Examined');
 
         // Filters
@@ -127,8 +128,8 @@ class Report extends \App\Controller\AdminManagerIface
             $toolStr = $tool->toSql();
         }
 
-        $sql = sprintf('SELECT SQL_CALC_FOUND_ROWS d.name as \'companyName\', a.name as \'species\', ROUND(AVG(c.units), 1) as \'duration\', 
-            COUNT(c.id) as \'rotationCount\', 1 as \'studentPerRotation\', SUM(a.value) AS \'animalCount\', e.academic
+        $sql = sprintf('SELECT SQL_CALC_FOUND_ROWS d.name as \'companyName\', a.name as \'species\', ROUND(AVG(c.units), 1) as \'duration\', SUM(c.units) as \'units\', 
+            COUNT(c.id) as \'placementCount\', SUM(a.value) AS \'animalCount\', e.academic
 FROM animal_value a, animal_type b, placement c, company d LEFT JOIN
  (
    SELECT a.id, IFNULL(c.academic, 0) as \'academic\'
