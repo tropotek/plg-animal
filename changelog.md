@@ -1,5 +1,10 @@
 #CHANGELOG#
 
+Ver 2.0.26 [2019-02-11]:
+-------------------------------
+  - Fixed the animals report for DVM 1
+
+
 Ver 2.0.24 [2018-12-05]:
 -------------------------------
   - Updated the COA company manager
