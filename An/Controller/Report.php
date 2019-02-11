@@ -129,22 +129,22 @@ class Report extends \App\Controller\AdminManagerIface
 
         $sql = sprintf('SELECT SQL_CALC_FOUND_ROWS d.name as \'companyName\', a.name as \'species\', ROUND(AVG(c.units), 1) as \'duration\', 
             COUNT(c.id) as \'rotationCount\', 1 as \'studentPerRotation\', SUM(a.value) AS \'animalCount\', e.academic
-FROM animal_value a, animal_type b, placement c, company d,
+FROM animal_value a, animal_type b, placement c, company d LEFT JOIN
  (
-   SELECT a.id, c.academic as \'academic\'
+   SELECT a.id, IFNULL(c.academic, 0) as \'academic\'
    FROM company a, company_has_supervisor b, supervisor c
    WHERE a.id = b.company_id AND b.supervisor_id = c.id
    GROUP BY a.id
- ) e
+ ) e ON (d.id = e.id)
 
 WHERE a.type_id = b.id AND a.type_id > 0 AND b.del = 0 AND a.placement_id = c.id AND
-      c.company_id = d.id AND d.id = e.id AND c.del = 0 AND d.del = 0 AND %s
+      c.company_id = d.id AND c.del = 0 AND d.del = 0 AND %s
 GROUP BY c.company_id, a.type_id
 %s', $where, $toolStr);
 
 
         $res = $db->query($sql);
-        //vd($sql);
+        vd($sql);
         return \Tk\Db\Map\ArrayObject::create($res, $tool);
     }
 
