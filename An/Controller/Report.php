@@ -145,7 +145,7 @@ GROUP BY c.company_id, a.type_id
 
 
         $res = $db->query($sql);
-        vd($sql);
+        //vd($sql);
         return \Tk\Db\Map\ArrayObject::create($res, $tool);
     }
 
