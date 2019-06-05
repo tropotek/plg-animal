@@ -37,7 +37,7 @@ class ReportEditHandler implements Subscriber
         $controller = $event->getForm()->get('controller');
         if ($controller instanceof \App\Controller\Placement\ReportEdit) {
             if ($controller->getSubject() && $controller->getPlacement()) {
-                $this->animalTypes = \An\Db\TypeMap::create()->findFiltered(array('profileId' => $controller->getPlacement()->getSubject()->profileId));
+                $this->animalTypes = \An\Db\TypeMap::create()->findFiltered(array('profileId' => $controller->getPlacement()->getSubject()->getProfileId()));
                 if (!$this->animalTypes->count()) return;
                 $this->controller = $controller;
                 $this->form = $controller->getForm();
@@ -57,7 +57,7 @@ class ReportEditHandler implements Subscriber
 
             $this->form->appendField(new \An\Form\Field\AnimalSelect('animals', $this->animalTypes, $this->controller->getPlacement()))
                 ->setFieldset('Animal Types')->setNotes('Report the species and number of cases you were involved with while on your '.
-                    \App\Db\Phrase::findValue('placement', $this->controller->getPlacement()->getSubject()->profileId).'.');
+                    \App\Db\Phrase::findValue('placement', $this->controller->getPlacement()->getSubject()->getProfileId()).'.');
 
             $formRenderer = $this->form->getRenderer();
             $template = $formRenderer->getTemplate();

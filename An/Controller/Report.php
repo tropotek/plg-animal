@@ -84,7 +84,7 @@ class Report extends \App\Controller\AdminManagerIface
         //                     ---------------------------------------------------------------------------------
         $tool = $this->table->getTool('d.name, a.name');
         $filter = $this->table->getFilterValues();
-        $filter['profileId'] = $this->subject->profileId;
+        $filter['profileId'] = $this->subject->getProfileId();
         $filter['subjectId'] = $this->subject->getId();
 
         $where = '';
