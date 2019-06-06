@@ -49,7 +49,7 @@ class AnimalList extends \Dom\Renderer\Renderer
             $row->insertText('name', $val->name);
             $row->insertText('size', $val->value);
             $row->appendRepeat();
-            $template->setChoice('table');
+            $template->setVisible('table');
         }
 
         return $template;
