@@ -35,7 +35,7 @@ class ReportEditHandler implements Subscriber
     {
         /** @var \App\Controller\Placement\ReportEdit $controller */
         $controller = $event->getForm()->get('controller');
-        if ($controller instanceof \App\Controller\Placement\ReportEdit) {
+        if ($controller && $controller instanceof \App\Controller\Placement\ReportEdit) {
             if ($controller->getSubject() && $controller->getPlacement()) {
                 $this->animalTypes = \An\Db\TypeMap::create()->findFiltered(array('profileId' => $controller->getPlacement()->getSubject()->getProfileId()));
                 if (!$this->animalTypes->count()) return;
