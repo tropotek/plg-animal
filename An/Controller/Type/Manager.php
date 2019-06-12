@@ -2,7 +2,6 @@
 namespace An\Controller\Type;
 
 use Dom\Template;
-use Tk\Form\Field;
 use Tk\Request;
 
 
@@ -21,13 +20,6 @@ class Manager extends \App\Controller\AdminManagerIface
 
 
     /**
-     * @var null|\Tk\Uri
-     */
-    private $editUrl = null;
-
-
-
-    /**
      * Manager constructor.
      */
     public function __construct()
@@ -37,9 +29,7 @@ class Manager extends \App\Controller\AdminManagerIface
 
     /**
      * @param Request $request
-     * @throws \Tk\Db\Exception
-     * @throws \Tk\Exception
-     * @throws \Tk\Form\Exception
+     * @throws \Exception
      */
     public function doDefault(Request $request)
     {
@@ -49,43 +39,24 @@ class Manager extends \App\Controller\AdminManagerIface
         if (!$this->profile && $subject)
             $this->profile = $subject->getProfile();
 
-        $this->editUrl = \App\Uri::createHomeUrl('/animalTypeEdit.html');
+        $this->setTable(\An\Table\Type::create());
+        $this->getTable()->setEditUrl(\App\Uri::createHomeUrl('/animalTypeEdit.html'));
+        $this->getTable()->init();
 
-        $u = clone $this->editUrl;
-        $this->getActionPanel()->add(\Tk\Ui\Button::create('New Type',
-            $u->set('profileId', $this->profile->getId()), 'fa fa-paw fa-add-action'));
-
-        $this->table = \App\Config::getInstance()->createTable(\App\Config::getInstance()->getUrlName());
-        $this->table->setRenderer(\App\Config::getInstance()->createTableRenderer($this->table));
-
-        $this->table->addCell(new \Tk\Table\Cell\Checkbox('id'));
-        $this->table->addCell(new \Tk\Table\Cell\Text('name'))->addCss('key')->setUrl(clone $this->editUrl);
-        $this->table->addCell(new \Tk\Table\Cell\Text('min'));
-        $this->table->addCell(new \Tk\Table\Cell\Text('max'));
-        $this->table->addCell(new \Tk\Table\Cell\Date('modified'));
-
-        // Filters
-        $this->table->addFilter(new Field\Input('keywords'))->setAttr('placeholder', 'Keywords');
-
-        // Actions
-        $this->table->addAction(\Tk\Table\Action\ColumnSelect::create()->setDisabled(array('id', 'name')));
-        $this->table->addAction(\Tk\Table\Action\Csv::create());
-        $this->table->addAction(\Tk\Table\Action\Delete::create());
-
-        $this->table->setList($this->getList());
+        $filter = array(
+            'profileId' => $this->profile->getId()
+        );
+        $this->getTable()->setList($this->getTable()->findList($filter));
 
     }
 
     /**
-     * @return \An\Db\Type[]|\Tk\Db\Map\ArrayObject
-     * @throws \Tk\Db\Exception
-     * @throws \Tk\Exception
+     *
      */
-    protected function getList()
+    public function initActionPanel()
     {
-        $filter = $this->table->getFilterValues();
-        $filter['profileId'] = $this->profile->getId();
-        return \An\Db\TypeMap::create()->findFiltered($filter, $this->table->getTool());
+        $this->getActionPanel()->append(\Tk\Ui\Link::createBtn('New Type',
+            $this->getTable()->getEditUrl()->set('profileId', $this->profile->getId()), 'fa fa-paw fa-add-action'));
     }
 
     /**
@@ -93,9 +64,10 @@ class Manager extends \App\Controller\AdminManagerIface
      */
     public function show()
     {
+        $this->initActionPanel();
         $template = parent::show();
 
-        $template->replaceTemplate('table', $this->table->getRenderer()->show());
+        $template->appendTemplate('panel', $this->table->getRenderer()->show());
 
         return $template;
     }
@@ -108,18 +80,7 @@ class Manager extends \App\Controller\AdminManagerIface
     public function __makeTemplate()
     {
         $xhtml = <<<HTML
-<div>
-
-  <div class="panel panel-default">
-    <div class="panel-heading">
-      <h4 class="panel-title"><i class="fa fa-paw"></i> Animal Types</h4>
-    </div>
-    <div class="panel-body">
-      <div var="table"></div>
-    </div>
-  </div>
-
-</div>
+<div class="tk-panel" data-panel-title="Animal Types" data-panel-icon="fa fa-paw" var="panel"></div>
 HTML;
 
         return \Dom\Loader::load($xhtml);

@@ -2,8 +2,6 @@
 namespace An\Controller\Type;
 
 use Dom\Template;
-use Tk\Form\Event;
-use Tk\Form\Field;
 use Tk\Request;
 
 
@@ -20,8 +18,6 @@ class Edit extends \App\Controller\AdminEditIface
      */
     protected $type = null;
 
-
-
     /**
      * Iface constructor.
      */
@@ -34,8 +30,6 @@ class Edit extends \App\Controller\AdminEditIface
      *
      * @param Request $request
      * @throws \Exception
-     * @throws \Tk\Db\Exception
-     * @throws \Tk\Form\Exception
      */
     public function doDefault(Request $request)
     {
@@ -45,56 +39,9 @@ class Edit extends \App\Controller\AdminEditIface
             $this->type = \An\Db\TypeMap::create()->find($request->get('typeId'));
         }
 
-        $this->buildForm();
-
-        $this->form->load(\An\Db\TypeMap::create()->unmapForm($this->type));
-        $this->form->execute($request);
-    }
-
-    /**
-     * @throws \Tk\Exception
-     * @throws \Tk\Form\Exception
-     */
-    protected function buildForm() 
-    {
-        $this->form = $this->getConfig()->createForm('animalTypeEdit');
-        $this->form->setRenderer($this->getConfig()->createFormRenderer($this->form));
-
-        $this->form->addField(new Field\Input('name'));
-        $this->form->addField(new \App\Form\Field\MinMax('min', 'max'));
-        $this->form->addField(new Field\Textarea('description'));
-        $this->form->addField(new Field\Textarea('notes'));
-
-        $this->form->addField(new Event\Submit('update', array($this, 'doSubmit')));
-        $this->form->addField(new Event\Submit('save', array($this, 'doSubmit')));
-        $this->form->addField(new Event\Link('cancel', $this->getConfig()->getBackUrl()));
-
-    }
-
-    /**
-     * @param \Tk\Form $form
-     * @param \Tk\Form\Event\Iface $event
-     * @throws \ReflectionException
-     * @throws \Tk\Db\Exception
-     * @throws \Tk\Exception
-     */
-    public function doSubmit($form, $event)
-    {
-        // Load the object with data from the form using a helper object
-        \An\Db\TypeMap::create()->mapForm($form->getValues(), $this->type);
-
-        $form->addFieldErrors($this->type->validate());
-
-        if ($form->hasErrors()) {
-            return;
-        }
-        $this->type->save();
-
-        \Tk\Alert::addSuccess('Record saved!');
-        $event->setRedirect($this->getConfig()->getBackUrl());
-        if ($form->getTriggeredEvent()->getName() == 'save') {
-            $event->setRedirect(\Tk\Uri::create()->set('typeId', $this->type->getId()));
-        }
+        $this->setForm(\An\Form\Type::create()->setModel($this->type));
+        $this->initForm($request);
+        $this->getForm()->execute();
     }
 
     /**
@@ -105,7 +52,7 @@ class Edit extends \App\Controller\AdminEditIface
         $template = parent::show();
 
         // Render the form
-        $template->insertTemplate('form', $this->form->getRenderer()->show());
+        $template->appendTemplate('panel', $this->getForm()->show());
 
         return $template;
     }
@@ -118,18 +65,7 @@ class Edit extends \App\Controller\AdminEditIface
     public function __makeTemplate()
     {
         $xhtml = <<<HTML
-<div>
-    
-  <div class="panel panel-default">
-    <div class="panel-heading">
-      <h4 class="panel-title"><i class="fa fa-paw"></i> <span var="panel-title">Animal Type Edit</span></h4>
-    </div>
-    <div class="panel-body">
-      <div var="form"></div>
-    </div>
-  </div>
-  
-</div>
+<div class="tk-panel" data-panel-title="Animal Type Edit" data-panel-icon="fa fa-paw" var="panel"></div>
 HTML;
 
         return \Dom\Loader::load($xhtml);
