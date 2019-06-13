@@ -29,7 +29,6 @@ class ValueMap extends \App\Db\Mapper
 
     /**
      * @return \Tk\DataMap\DataMap
-     * @throws \Tk\Db\Exception
      */
     public function getDbMap()
     {
@@ -71,7 +70,7 @@ class ValueMap extends \App\Db\Mapper
      *
      * @param $placementId
      * @return $this
-     * @throws \Tk\Db\Exception
+     * @throws \Exception
      */
     public function removeAllByPlacementId($placementId)
     {
@@ -83,28 +82,23 @@ class ValueMap extends \App\Db\Mapper
     }
 
     /**
-     * Find filtered records
-     *
-     * @param array $filter
+     * @param array|\Tk\Db\Filter $filter
      * @param Tool $tool
      * @return ArrayObject|Value[]
-     * @throws \Tk\Db\Exception
+     * @throws \Exception
      */
-    public function findFiltered($filter = array(), $tool = null)
+    public function findFiltered($filter, $tool = null)
     {
-        list($from, $where) = $this->processFilter($filter);
-        $r = $this->selectFrom($from, $where, $tool);
-        return $r;
+        return $this->selectFromFilter($this->makeQuery(\Tk\Db\Filter::create($filter)), $tool);
     }
 
     /**
-     * @param $filter
-     * @return array
+     * @param \Tk\Db\Filter $filter
+     * @return \Tk\Db\Filter
      */
-    protected function processFilter($filter)
+    public function makeQuery(\Tk\Db\Filter $filter)
     {
-        $from = sprintf('%s a ', $this->quoteTable($this->getTable()));
-        $where = '';
+        $filter->appendFrom('%s a ', $this->quoteParameter($this->getTable()));
 
         if (!empty($filter['keywords'])) {
             $kw = '%' . $this->getDb()->escapeString($filter['keywords']) . '%';
@@ -115,65 +109,56 @@ class ValueMap extends \App\Db\Mapper
                 $id = (int)$filter['keywords'];
                 $w .= sprintf('a.id = %d OR ', $id);
             }
-            if ($w) {
-                $where .= '(' . substr($w, 0, -3) . ') AND ';
-            }
+            if ($w) $filter->appendWhere('(%s) AND ', substr($w, 0, -3));
         }
 
         if (!empty($filter['typeId'])) {
-            $where .= sprintf('a.type_id = %s AND ', (int)$filter['typeId']);
+            $filter->appendWhere('a.type_id = %s AND ', (int)$filter['typeId']);
         }
 
         if (!empty($filter['placementId'])) {
-            $where .= sprintf('a.placement_id = %s AND ', (int)$filter['placementId']);
+            $filter->appendWhere('a.placement_id = %s AND ', (int)$filter['placementId']);
         }
 
         if (!empty($filter['profileId']) || !empty($filter['subjectId'])) {
-            $from .= sprintf(', %s b', $this->quoteTable('animal_type'));
-            $where .= sprintf('a.type_id = b.id AND ');
+            $filter->appendFrom(', %s b', $this->quoteTable('animal_type'));
+            $filter->appendWhere('a.type_id = b.id AND ');
             if (!empty($filter['profileId'])) {
-                $where .= sprintf('b.profile_id = %s AND ', (int)$filter['profileId']);
+                $filter->appendWhere('b.profile_id = %s AND ', (int)$filter['profileId']);
             }
             if (!empty($filter['subjectId'])) {
-                $from .= sprintf(', %s c', $this->quoteTable('placement'));
-                $where .= sprintf('a.placement_id = c.id AND c.subject_id = %s AND ', (int)$filter['subjectId']);
+                $filter->appendFrom(', %s c', $this->quoteTable('placement'));
+                $filter->appendWhere('a.placement_id = c.id AND c.subject_id = %s AND ', (int)$filter['subjectId']);
             }
         }
 
         if (!empty($filter['name'])) {
-            $where .= sprintf('a.name = %s AND ', $this->quote($filter['name']));
+            $filter->appendWhere('a.name = %s AND ', $this->quote($filter['name']));
         }
 
         if (!empty($filter['value'])) {
-            $where .= sprintf('a.value = %s AND ', $this->quote($filter['value']));
+            $filter->appendWhere('a.value = %s AND ', $this->quote($filter['value']));
         }
 
         if (!empty($filter['dateFrom'])) {
             /** @var \DateTime $dtef */
             $dtef = \Tk\Date::floor($filter['dateFrom']);
-            $where .= sprintf('a.created >= %s AND ', $this->quote($dtef->format(\Tk\Date::FORMAT_ISO_DATETIME)) );
+            $filter->appendWhere('a.created >= %s AND ', $this->quote($dtef->format(\Tk\Date::FORMAT_ISO_DATETIME)) );
         }
         if (!empty($filter['dateTo'])) {
             /** @var \DateTime $dtet */
             $dtet = \Tk\Date::ceil($filter['dateTo']);
-            $where .= sprintf('a.created <= %s AND ', $this->quote($dtet->format(\Tk\Date::FORMAT_ISO_DATETIME)) );
+            $filter->appendWhere('a.created <= %s AND ', $this->quote($dtet->format(\Tk\Date::FORMAT_ISO_DATETIME)) );
         }
 
         if (!empty($filter['exclude'])) {
             $w = $this->makeMultiQuery($filter['exclude'], 'a.id', 'AND', '!=');
-            if ($w) {
-                $where .= '('. $w . ') AND ';
-            }
+            if ($w) $filter->appendWhere('(%s) AND ', $w);
         }
 
-        if ($where) {
-            $where = substr($where, 0, -4);
-        }
-
-        $r = array($from, $where);
-        return $r;
-
+        return $filter;
     }
+
 
     /**
      * @param array $filter
@@ -182,18 +167,21 @@ class ValueMap extends \App\Db\Mapper
      */
     public function findTotals($filter, $tool = null)
     {
-        list($from, $where) = $this->processFilter($filter);
-        if (!$where) $where = '1';
+        $a = array();
+        try {
+            list($from, $where) = $this->processFilter($filter);
+            if (!$where) $where = '1';
 
-        $sql = sprintf('SELECT a.name, a.type_id, SUM(a.value) AS total, COUNT(a.id) as \'count\'
+            $sql = sprintf('SELECT a.name, a.type_id, SUM(a.value) AS total, COUNT(a.id) as \'count\'
 FROM %s
 WHERE %s
 GROUP BY a.type_id
 ORDER BY a.name', $from, $where);
-        $stm = $this->getDb()->prepare($sql);
-        $stm->execute();
-        $r = $stm->fetchAll();
-        return $r;
+            $stm = $this->getDb()->prepare($sql);
+            $stm->execute();
+            $a = $stm->fetchAll();
+        } catch (\Exception $e) { }
+        return $a;
     }
 
 

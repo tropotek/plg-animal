@@ -17,7 +17,6 @@ class TypeMap extends \App\Db\Mapper
 
     /**
      * @return \Tk\DataMap\DataMap
-     * @throws \Tk\Db\Exception
      */
     public function getDbMap()
     {
@@ -56,83 +55,62 @@ class TypeMap extends \App\Db\Mapper
         }
         return $this->formMap;
     }
-
     /**
-     * Find filtered records
-     *
-     * @param array $filter
+     * @param array|\Tk\Db\Filter $filter
      * @param Tool $tool
      * @return ArrayObject|Type[]
-     * @throws \Tk\Db\Exception
+     * @throws \Exception
      */
-    public function findFiltered($filter = array(), $tool = null)
+    public function findFiltered($filter, $tool = null)
     {
-        if (!$tool) $tool = \Tk\Db\Tool::create('orderBy');
-
-        list($from, $where) = $this->processFilter($filter);
-        $r = $this->selectFrom($from, $where, $tool);
-        return $r;
+        return $this->selectFromFilter($this->makeQuery(\Tk\Db\Filter::create($filter)), $tool);
     }
 
     /**
-     * @param $filter
-     * @return array
+     * @param \Tk\Db\Filter $filter
+     * @return \Tk\Db\Filter
      */
-    protected function processFilter($filter)
+    public function makeQuery(\Tk\Db\Filter $filter)
     {
-        $from = sprintf('%s a ', $this->quoteTable($this->getTable()));
-        $where = '';
+        $filter->appendFrom('%s a ', $this->quoteParameter($this->getTable()));
 
         if (!empty($filter['keywords'])) {
             $kw = '%' . $this->getDb()->escapeString($filter['keywords']) . '%';
             $w = '';
             $w .= sprintf('a.name LIKE %s OR ', $this->getDb()->quote($kw));
-            $w .= sprintf('a.description LIKE %s OR ', $this->getDb()->quote($kw));
             if (is_numeric($filter['keywords'])) {
                 $id = (int)$filter['keywords'];
                 $w .= sprintf('a.id = %d OR ', $id);
             }
-            if ($w) {
-                $where .= '(' . substr($w, 0, -3) . ') AND ';
-            }
+            if ($w) $filter->appendWhere('(%s) AND ', substr($w, 0, -3));
         }
 
         if (!empty($filter['profileId'])) {
-            $where .= sprintf('a.profile_id = %s AND ', (int)$filter['profileId']);
+            $filter->appendWhere('a.profile_id = %s AND ', (int)$filter['profileId']);
         }
 
         if (!empty($filter['name'])) {
-            $where .= sprintf('a.name = %s AND ', $this->quote($filter['name']));
+            $filter->appendWhere('a.name = %s AND ', $this->quote($filter['name']));
         }
 
         if (!empty($filter['dateFrom'])) {
             /** @var \DateTime $dtef */
             $dtef = \Tk\Date::floor($filter['dateFrom']);
-            $where .= sprintf('a.created >= %s AND ', $this->quote($dtef->format(\Tk\Date::FORMAT_ISO_DATETIME)) );
+            $filter->appendWhere('a.created >= %s AND ', $this->quote($dtef->format(\Tk\Date::FORMAT_ISO_DATETIME)) );
         }
         if (!empty($filter['dateTo'])) {
             /** @var \DateTime $dtet */
             $dtet = \Tk\Date::ceil($filter['dateTo']);
-            $where .= sprintf('a.created <= %s AND ', $this->quote($dtet->format(\Tk\Date::FORMAT_ISO_DATETIME)) );
+            $filter->appendWhere('a.created <= %s AND ', $this->quote($dtet->format(\Tk\Date::FORMAT_ISO_DATETIME)) );
         }
 
         if (!empty($filter['exclude'])) {
             $w = $this->makeMultiQuery($filter['exclude'], 'a.id', 'AND', '!=');
-            if ($w) {
-                $where .= '('. $w . ') AND ';
-            }
+            if ($w) $filter->appendWhere('(%s) AND ', $w);
         }
 
-        if ($where) {
-            $where = substr($where, 0, -4);
-        }
-
-        $r = array($from, $where);
-        return $r;
-
+        return $filter;
     }
-
-
 
 
 }
