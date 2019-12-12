@@ -26,11 +26,11 @@ class ProfileEditHandler implements Subscriber
         /** @var \Tk\Controller\Iface $controller */
         $controller = $event->get('controller');
         if ($controller instanceof \App\Controller\Profile\Edit) {
-            if ($controller->getUser()->isStaff() && $controller->getProfile()) {
+            if ($controller->getUser()->isStaff() && $controller->getCourse()) {
                 /** @var \Tk\Ui\Admin\ActionPanel $actionPanel */
                 $actionPanel = $controller->getActionPanel();
                 $actionPanel->add(\Tk\Ui\Button::create('Animal Types',
-                    \App\Uri::createHomeUrl('/animalTypeManager.html')->set('profileId', $controller->getProfile()->getId()), 'fa fa-paw'));
+                    \App\Uri::createHomeUrl('/animalTypeManager.html')->set('profileId', $controller->getCourse()->getId()), 'fa fa-paw'));
             }
         }
     }
