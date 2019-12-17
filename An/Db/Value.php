@@ -2,6 +2,9 @@
 namespace An\Db;
 
 
+use App\Db\Traits\PlacementTrait;
+use Bs\Db\Traits\TimestampTrait;
+
 /**
  * @author Michael Mifsud <info@tropotek.com>
  * @see http://www.tropotek.com/
@@ -9,6 +12,8 @@ namespace An\Db;
  */
 class Value extends \Tk\Db\Map\Model
 {
+    use TimestampTrait;
+    use PlacementTrait;
     
     /**
      * @var int
@@ -53,13 +58,7 @@ class Value extends \Tk\Db\Map\Model
     /**
      * @var Type
      */
-    private $type = null;
-
-    /**
-     * @var \App\Db\Placement
-     */
-    private $placement = null;
-
+    private $_type = null;
 
 
     /**
@@ -67,8 +66,7 @@ class Value extends \Tk\Db\Map\Model
      */
     public function __construct()
     {
-        $this->modified = \Tk\Date::create();
-        $this->created = \Tk\Date::create();
+        $this->_TimestampTrait();
     }
 
     /**
@@ -81,44 +79,97 @@ class Value extends \Tk\Db\Map\Model
     public static function create($placement, $type, $value, $notes = '')
     {
         $obj = new self();
-        $obj->placementId = $placement->id;
-        $obj->typeId = $type->id;
-        $obj->name = $type->name;
-        $obj->notes = $notes;
-        $obj->value = (int)$value;
+        $obj->setPlacementId($placement->getId());
+        $obj->setTypeId($type->getId());
+        $obj->setName($type->getName());
+        $obj->setNotes($notes);
+        $obj->setValue((int)$value);
         return $obj;
     }
 
-    /**
-     *
-     */
-    public function save()
-    {
-        parent::save();
-    }
 
     /**
      * @return null|Type|\Tk\Db\Map\Model|\Tk\Db\ModelInterface
-     * @throws \Tk\Db\Exception
+     * @throws \Exception
      */
     public function getType()
     {
-        if (!$this->type) {
-            $this->type = TypeMap::create()->find($this->typeId);
+        if (!$this->_type) {
+            $this->_type = TypeMap::create()->find($this->getTypeId());
         }
-        return $this->type;
+        return $this->_type;
     }
 
     /**
-     * @return \App\Db\Placement|null|\Tk\Db\Map\Model|\Tk\Db\ModelInterface
-     * @throws \Tk\Db\Exception
+     * @return int
      */
-    public function getPlacement()
+    public function getTypeId(): int
     {
-        if (!$this->placement) {
-            $this->placement = \App\Db\PlacementMap::create()->find($this->placementId);
-        }
-        return $this->placement;
+        return $this->typeId;
+    }
+
+    /**
+     * @param int $typeId
+     * @return Value
+     */
+    public function setTypeId(int $typeId): Value
+    {
+        $this->typeId = $typeId;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    /**
+     * @param string $name
+     * @return Value
+     */
+    public function setName(string $name): Value
+    {
+        $this->name = $name;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getValue(): string
+    {
+        return $this->value;
+    }
+
+    /**
+     * @param string $value
+     * @return Value
+     */
+    public function setValue(string $value): Value
+    {
+        $this->value = $value;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getNotes(): string
+    {
+        return $this->notes;
+    }
+
+    /**
+     * @param string $notes
+     * @return Value
+     */
+    public function setNotes(string $notes): Value
+    {
+        $this->notes = $notes;
+        return $this;
     }
 
     /**
@@ -127,14 +178,12 @@ class Value extends \Tk\Db\Map\Model
     public function validate()
     {
         $errors = array();
+        $errors = $this->validatePlacementId($errors);
 
-        if ((int)$this->typeId <= 0) {
+        if ((int)$this->getTypeId() <= 0) {
             $errors['typeId'] = 'Invalid Type ID';
         }
-        if ((int)$this->placementId <= 0) {
-            $errors['placementId'] = 'Invalid Placement ID';
-        }
-        if (!$this->name) {
+        if (!$this->getName()) {
             $errors['name'] = 'Please enter a valid name';
         }
 

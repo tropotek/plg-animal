@@ -112,6 +112,11 @@ class ValueMap extends \App\Db\Mapper
             if ($w) $filter->appendWhere('(%s) AND ', substr($w, 0, -3));
         }
 
+        if (!empty($filter['id'])) {
+            $w = $this->makeMultiQuery($filter['id'], 'a.id');
+            if ($w) $filter->appendWhere('(%s) AND ', $w);
+        }
+
         if (!empty($filter['typeId'])) {
             $filter->appendWhere('a.type_id = %s AND ', (int)$filter['typeId']);
         }
@@ -120,11 +125,11 @@ class ValueMap extends \App\Db\Mapper
             $filter->appendWhere('a.placement_id = %s AND ', (int)$filter['placementId']);
         }
 
-        if (!empty($filter['profileId']) || !empty($filter['subjectId'])) {
+        if (!empty($filter['courseId']) || !empty($filter['subjectId'])) {
             $filter->appendFrom(', %s b', $this->quoteTable('animal_type'));
             $filter->appendWhere('a.type_id = b.id AND ');
-            if (!empty($filter['profileId'])) {
-                $filter->appendWhere('b.profile_id = %s AND ', (int)$filter['profileId']);
+            if (!empty($filter['courseId'])) {
+                $filter->appendWhere('b.course_id = %s AND ', (int)$filter['courseId']);
             }
             if (!empty($filter['subjectId'])) {
                 $filter->appendFrom(', %s c', $this->quoteTable('placement'));

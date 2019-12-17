@@ -18,8 +18,7 @@ class ProfileEditHandler implements Subscriber
      * Check the user has access to this controller
      *
      * @param \Tk\Event\Event $event
-     * @throws \Tk\Db\Exception
-     * @throws \Tk\Exception
+     * @throws \Exception
      */
     public function onControllerInit(\Tk\Event\Event $event)
     {
@@ -29,8 +28,8 @@ class ProfileEditHandler implements Subscriber
             if ($controller->getUser()->isStaff() && $controller->getCourse()) {
                 /** @var \Tk\Ui\Admin\ActionPanel $actionPanel */
                 $actionPanel = $controller->getActionPanel();
-                $actionPanel->add(\Tk\Ui\Button::create('Animal Types',
-                    \App\Uri::createHomeUrl('/animalTypeManager.html')->set('profileId', $controller->getCourse()->getId()), 'fa fa-paw'));
+                $actionPanel->append(\Tk\Ui\Link::createBtn('Animal Types',
+                    \Uni\Uri::createHomeUrl('/animalTypeManager.html')->set('courseId', $controller->getCourse()->getId()), 'fa fa-paw'));
             }
         }
     }

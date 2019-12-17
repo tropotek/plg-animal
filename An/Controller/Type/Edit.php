@@ -34,7 +34,7 @@ class Edit extends \App\Controller\AdminEditIface
     public function doDefault(Request $request)
     {
         $this->type = new \An\Db\Type();
-        $this->type->profileId = (int)$request->get('profileId');
+        $this->type->setCourseId((int)$request->get('courseId'));
         if ($request->get('typeId')) {
             $this->type = \An\Db\TypeMap::create()->find($request->get('typeId'));
         }

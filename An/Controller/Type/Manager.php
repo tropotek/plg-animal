@@ -14,9 +14,9 @@ class Manager extends \App\Controller\AdminManagerIface
 {
 
     /**
-     * @var \App\Db\Profile
+     * @var \App\Db\Course
      */
-    private $profile = null;
+    private $course = null;
 
 
     /**
@@ -33,18 +33,18 @@ class Manager extends \App\Controller\AdminManagerIface
      */
     public function doDefault(Request $request)
     {
-        $this->profile = \App\Db\ProfileMap::create()->find($request->get('profileId'));
+        $this->course = $this->getConfig()->getCourseMapper()->find($request->get('courseId'));
         /** @var \App\Db\Subject $subject */
         $subject = $this->getConfig()->getSubject();
-        if (!$this->profile && $subject)
-            $this->profile = $subject->getProfile();
+        if (!$this->course && $subject)
+            $this->course = $subject->getCourse();
 
         $this->setTable(\An\Table\Type::create());
-        $this->getTable()->setEditUrl(\App\Uri::createHomeUrl('/animalTypeEdit.html'));
+        $this->getTable()->setEditUrl(\Uni\Uri::createHomeUrl('/animalTypeEdit.html'));
         $this->getTable()->init();
 
         $filter = array(
-            'profileId' => $this->profile->getId()
+            'courseId' => $this->course->getId()
         );
         $this->getTable()->setList($this->getTable()->findList($filter));
 
@@ -56,7 +56,7 @@ class Manager extends \App\Controller\AdminManagerIface
     public function initActionPanel()
     {
         $this->getActionPanel()->append(\Tk\Ui\Link::createBtn('New Type',
-            $this->getTable()->getEditUrl()->set('profileId', $this->profile->getId()), 'fa fa-paw fa-add-action'));
+            $this->getTable()->getEditUrl()->set('courseId', $this->course->getId()), 'fa fa-paw fa-add-action'));
     }
 
     /**

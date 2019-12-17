@@ -72,17 +72,10 @@ class Report extends \App\TableIface
         if (!empty($filter['subjectId'])) {
             $where .= sprintf('c.subject_id = %d AND ', (int)$filter['subjectId']);
         } else {
-            if (!empty($filter['profileId'])) {
-                $where .= sprintf('b.profile_id = %d AND ', (int)$filter['profileId']);
+            if (!empty($filter['courseId'])) {
+                $where .= sprintf('b.course_id = %d AND ', (int)$filter['courseId']);
             }
         }
-
-//        if (!empty($filter['dateStart']) && !empty($filter['dateEnd'])) {     // Contains
-//            $start = \Tk\Date::create($filter['dateStart']);
-//            $end = \Tk\Date::create($filter['dateEnd']);
-//            $where .= sprintf('c.date_start >= %s AND ', $db->quote(\Tk\Date::floor($start)->format(\Tk\Date::FORMAT_ISO_DATETIME)) );
-//            $where .= sprintf('c.date_start <= %s AND ', $db->quote(\Tk\Date::ceil($end)->format(\Tk\Date::FORMAT_ISO_DATETIME)) );
-//        }
 
         if (!empty($filter['dateStart'])) {     // starts with
             $start = \Tk\Date::createFormDate($filter['dateStart']);

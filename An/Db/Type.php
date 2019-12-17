@@ -2,6 +2,10 @@
 namespace An\Db;
 
 
+use Bs\Db\Traits\OrderByTrait;
+use Bs\Db\Traits\TimestampTrait;
+use Uni\Db\Traits\CourseTrait;
+
 /**
  * @author Michael Mifsud <info@tropotek.com>
  * @see http://www.tropotek.com/
@@ -9,6 +13,9 @@ namespace An\Db;
  */
 class Type extends \Tk\Db\Map\Model
 {
+    use TimestampTrait;
+    use CourseTrait;
+    use OrderByTrait;
     
     /**
      * @var int
@@ -18,7 +25,7 @@ class Type extends \Tk\Db\Map\Model
     /**
      * @var int
      */
-    public $profileId = 0;
+    public $courseId = 0;
 
     /**
      * @var string
@@ -60,41 +67,105 @@ class Type extends \Tk\Db\Map\Model
      */
     public $created = null;
 
-    /**
-     * @var \App\Db\Profile
-     */
-    private $profile = null;
-
-
 
     /**
      * constructor.
      */
     public function __construct()
     {
-        $this->modified = \Tk\Date::create();
-        $this->created = \Tk\Date::create();
+        $this->_TimestampTrait();
     }
 
     /**
-     *
+     * @return string
      */
-    public function save()
+    public function getName(): string
     {
-        parent::save();
+        return $this->name;
     }
 
     /**
-     * @return \App\Db\Profile|null|\Tk\Db\Map\Model|\Tk\Db\ModelInterface
-     * @throws \Tk\Db\Exception
+     * @param string $name
+     * @return Type
      */
-    public function getProfile()
+    public function setName(string $name): Type
     {
-        if (!$this->profile) {
-            $this->profile = \App\Db\ProfileMap::create()->find($this->profileId);
-        }
-        return $this->profile;
+        $this->name = $name;
+        return $this;
     }
+
+    /**
+     * @return string
+     */
+    public function getDescription(): string
+    {
+        return $this->description;
+    }
+
+    /**
+     * @param string $description
+     * @return Type
+     */
+    public function setDescription(string $description): Type
+    {
+        $this->description = $description;
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getMin(): int
+    {
+        return $this->min;
+    }
+
+    /**
+     * @param int $min
+     * @return Type
+     */
+    public function setMin(int $min): Type
+    {
+        $this->min = $min;
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getMax(): int
+    {
+        return $this->max;
+    }
+
+    /**
+     * @param int $max
+     * @return Type
+     */
+    public function setMax(int $max): Type
+    {
+        $this->max = $max;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getNotes(): string
+    {
+        return $this->notes;
+    }
+
+    /**
+     * @param string $notes
+     * @return Type
+     */
+    public function setNotes(string $notes): Type
+    {
+        $this->notes = $notes;
+        return $this;
+    }
+
 
     /**
      * @return array
@@ -102,10 +173,8 @@ class Type extends \Tk\Db\Map\Model
     public function validate()
     {
         $errors = array();
+        $errors = $this->validateCourseId($errors);
 
-        if ((int)$this->profileId <= 0) {
-            $errors['profileId'] = 'Invalid Profile ID';
-        }
         if (!$this->name) {
             $errors['name'] = 'Please enter a valid name';
         }
