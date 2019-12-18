@@ -32,7 +32,7 @@ class Report extends \App\TableIface
         $this->appendCell(new \Tk\Table\Cell\Boolean('academic'));
         $this->appendCell(new \Tk\Table\Cell\Text('species'));
         $this->appendCell(new \Tk\Table\Cell\Text('placementCount'))->setLabel('Placements');
-        $this->appendCell(new \Tk\Table\Cell\Text('units'))->setLabel('Total ' . $this->getConfig()->getCourse()->getProfile()->getUnitLabel());
+        $this->appendCell(new \Tk\Table\Cell\Text('units'))->setLabel('Total ' . $this->getConfig()->getCourse()->getCourseProfile()->getUnitLabel());
         $this->appendCell(new \Tk\Table\Cell\Text('duration'))->setLabel('Avg. Duration');
         //$this->appendCell(new \Tk\Table\Cell\Text('studentPerRotation'));
         $this->appendCell(new \Tk\Table\Cell\Text('animalCount'))->setLabel('Patients Examined');
