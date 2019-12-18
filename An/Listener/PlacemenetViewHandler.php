@@ -2,7 +2,6 @@
 namespace An\Listener;
 
 use Tk\Event\Subscriber;
-use An\Plugin;
 
 /**
  * @author Michael Mifsud <info@tropotek.com>

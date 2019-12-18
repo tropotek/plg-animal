@@ -1,9 +1,9 @@
 <?php
 namespace An\Listener;
 
-use Tk\Event\Subscriber;
-use Symfony\Component\HttpKernel\KernelEvents;
 use An\Plugin;
+use Symfony\Component\HttpKernel\KernelEvents;
+use Tk\Event\Subscriber;
 
 /**
  * @author Michael Mifsud <info@tropotek.com>
