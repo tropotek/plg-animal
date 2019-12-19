@@ -36,9 +36,9 @@ class Value extends \Tk\Db\Map\Model
     public $name = '';
 
     /**
-     * @var string
+     * @var int
      */
-    public $value = '';
+    public $value = 0;
 
     /**
      * @var string
@@ -137,18 +137,18 @@ class Value extends \Tk\Db\Map\Model
     }
 
     /**
-     * @return string
+     * @return int
      */
-    public function getValue(): string
+    public function getValue(): int
     {
         return $this->value;
     }
 
     /**
-     * @param string $value
+     * @param int $value
      * @return Value
      */
-    public function setValue(string $value): Value
+    public function setValue(int $value): Value
     {
         $this->value = $value;
         return $this;
