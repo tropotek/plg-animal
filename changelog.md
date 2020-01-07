@@ -1,5 +1,10 @@
 #CHANGELOG#
 
+Ver 3.0.10 [2020-01-07]:
+-------------------------------
+  - Added CA buttons to student placement list as requested.
+
+
 Ver 3.0.8 [2019-06-17]:
 -------------------------------
   - Upgraded all DB model mapper filter queries to use new Filter object

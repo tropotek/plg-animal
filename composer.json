@@ -8,9 +8,9 @@
         "EMS III",
         "animal"
     ],
-    "time": "2019-04-09",
+    "time": "2020-01-07",
     "license": "MIT",
-    "version": "master",
+    "version": "3.0.10",
     "access": "admin, course",
     "authors":  [
          {
