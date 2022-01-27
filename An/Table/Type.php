@@ -27,6 +27,7 @@ class Type extends \App\TableIface
      */
     public function init()
     {
+        $this->appendCell(new \Tk\Table\Cell\OrderBy('orderBy'))->setIconOnly();
 
         $this->appendCell(new \Tk\Table\Cell\Checkbox('id'));
         $this->appendCell(new \Tk\Table\Cell\Text('name'))->addCss('key')->setUrl($this->getEditUrl());

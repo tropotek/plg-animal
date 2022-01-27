@@ -1,6 +1,7 @@
 <?php
 namespace An\Listener;
 
+use Tk\Db\Tool;
 use Tk\Event\Subscriber;
 
 /**
@@ -38,7 +39,7 @@ class ReportEditHandler implements Subscriber
         if ($controller && $controller instanceof \App\Controller\Placement\ReportEdit) {
             if ($controller->getSubject() && $controller->getPlacement()) {
                 $this->animalTypes = \An\Db\TypeMap::create()
-                    ->findFiltered(array('courseId' => $controller->getPlacement()->getSubject()->getCourseId()));
+                    ->findFiltered(array('courseId' => $controller->getPlacement()->getSubject()->getCourseId()), Tool::create('order_by'));
                 if (!$this->animalTypes->count()) return;
                 $this->controller = $controller;
                 $this->form = $controller->getForm();
