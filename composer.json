@@ -1,6 +1,6 @@
 {
-    "name": "ttek-plg/plg-animal",
-    "type": "ttek-plugin",
+    "name": "uom-plg/plg-animal",
+    "type": "uom-plugin",
     "description": "EMS III Placement Animals Types Worked on plugin. Collects the number of animals students have worked on in their placement.",
     "keywords":  [
         "tropotek",
