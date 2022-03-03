@@ -25,7 +25,7 @@ Or add the following to your composer.json file:
 
 ```json
 {
-  "uom-plg/plg-animal": "~3.0"
+  "uom-plg/plg-animal": "~3.2"
 }
 ```
 
