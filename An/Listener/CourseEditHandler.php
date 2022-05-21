@@ -39,7 +39,9 @@ class CourseEditHandler implements Subscriber
      *
      * @param \Tk\Event\Event $event
      */
-    public function onControllerShow(\Tk\Event\Event $event) { }
+    public function onControllerShow(\Tk\Event\Event $event) {
+
+    }
 
 
     /**
