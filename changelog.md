@@ -1,5 +1,10 @@
 #CHANGELOG#
 
+Ver 3.2.8 [2022-08-05]:
+-------------------------------
+  - Tagging and releasing branch `3.0` with version `3.0.16`.
+
+
 Ver 3.2.6 [2022-08-04]:
 -------------------------------
   - removed comments
