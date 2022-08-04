@@ -25,13 +25,12 @@ Or add the following to your composer.json file:
 
 ```json
 {
-  "ttek-plg/plg-animal": "~3.0"
+  "ttek-plg/plg-animal": "~3.2"
 }
 ```
 
 If you do not use Composer, you can grab the code from GitHub, and use any
-PSR-0 compatible autoloader (e.g. the [plg-animal](https://github.com/tropotek/plg-animal))
-to load the classes.
+PSR-0 compatible autoloader to load the classes.
 
 ## Introduction
 

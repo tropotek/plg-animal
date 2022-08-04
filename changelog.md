@@ -1,6 +1,21 @@
 #CHANGELOG#
 
-Ver 3.0.16 [2022-03-07]:
+Ver 3.2.6 [2022-08-04]:
+-------------------------------
+  - removed comments
+
+
+Ver 3.2.4 [2022-05-22]:
+-------------------------------
+  - Added international agree checkbox and fixed sending of supervisor emails
+
+
+Ver 3.2.2 [2022-03-17]:
+-------------------------------
+  - Fixed placement export list for terraDotta
+
+
+Ver 3.2.0 [2022-03-03]:
 -------------------------------
 
 
