@@ -145,6 +145,9 @@ JS;
                 $valueObj->save();
             } else {
                 // Remove existing animals
+                // TODO: We should not remove all as the created/modified dates then become meaningless...
+                //       Either remove the created/modified dates or only remove/replace required values.
+                //       The latter is preferred
                 \An\Db\ValueMap::create()->removeAllByPlacementId($placement->id);
                 foreach ($list as $typeId => $value) {
                     if (!$typeId || !$value) continue;
